@@ -27,7 +27,6 @@ import { VerifyOtpComponent } from './auth/verify-otp/verify-otp.component';
 import { CustomerListComponent } from './admin/customer-list/customer-list.component';
 import { CustomerDetailAdminComponent } from './admin/customer-detail/customer-detail-admin.component';
 import { ChangePasswordComponent } from './auth/change-password/change-password.component';
-import { AdminTransactionListComponent } from './admin/transaction/transaction-list/transaction-list.component';
 
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { ExternalTransferComponent } from './transactions/external-transfer/external-transfer.component';
@@ -58,10 +57,10 @@ import { KycManagerComponent } from './admin/kyc-manager/kyc-manager.component';
 import { DashboardLoanAdminComponent } from './loan/dashboard-loan-admin/dashboard-loan-admin.component';
 import { AccountStatisticComponent } from './admin/account-statistic/account-statistic.component';
 import { CreditRequestComponent } from './admin/credit-request/credit-request.component';
-export const routes: Routes = [
 import { AdminTransactionDetailComponent } from './admin/transaction/transaction-detail/transaction-detail.component';
 import { DashboardTransactionComponent } from './admin/admin-dashboard/dashboard-transaction/dashboard-transaction.component';
 import { TransactionDepositComponent } from './admin/transaction/transaction-deposit/transaction-deposit.component';
+import { TransactionListComponent } from './admin/transaction/transaction-list/transaction-list.component';
   export const routes: Routes = [
   // Authentication routes (no sidebar)
   {
@@ -94,11 +93,11 @@ import { TransactionDepositComponent } from './admin/transaction/transaction-dep
       { path: 'kyc-management', component: KycManagerComponent }, // Placeholder, thay bằng component thực tế
       { path: 'credit-requests', component: CreditRequestComponent },
       { path: 'settings', component: CustomerListComponent }, // Placeholder, thay bằng component thực tế
-      { path: 'admin/transactions', component: AdminTransactionListComponent },
+      { path: 'admin/transactions', component: TransactionListComponent },
       { path: 'employee/loans', component: PendingLoanListComponent },
       { path: 'employee/loans/pending', component: PendingLoanListComponent },
       { path: 'employee/loans/:id', component: LoanDetailViewComponent },
-      { path: 'admin/transactions', component: AdminTransactionListComponent, canActivate: [KycGuard] },
+      { path: 'admin/transactions', component: TransactionListComponent, canActivate: [KycGuard] },
       { path: 'admin/transactions/detail/:referenceCode', component: AdminTransactionDetailComponent, canActivate: [KycGuard] },
       { path: 'admin/transactions/deposit', component: TransactionDepositComponent, canActivate: [KycGuard] },
     ]

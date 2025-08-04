@@ -136,25 +136,25 @@ export class ApplyNewLoanComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loanService.getLoansByCustomerId().then(obs => {
-      obs.subscribe({
-        next: (res) => {
-          const loans = res.data || [];
-          console.log(loans);
-          const hasActiveLoan = loans.some((loan: Loan) => loan.status === 'APPROVED' || loan.status === 'PENDING');
-          console.log(hasActiveLoan);
-          if (hasActiveLoan) {
-            this.router.navigate(['/loan/warning-apply-loan']);
-          } else {
-            this.loadAccounts();
-          }
-        },
-        error: (err) => {
-          this.loadAccounts();
-        }
-      });
-    });
-    // this.loadAccounts();
+    // this.loanService.getLoansByCustomerId().then(obs => {
+    //   obs.subscribe({
+    //     next: (res) => {
+    //       const loans = res.data || [];
+    //       console.log(loans);
+    //       const hasActiveLoan = loans.some((loan: Loan) => loan.status === 'APPROVED' || loan.status === 'PENDING');
+    //       console.log(hasActiveLoan);
+    //       if (hasActiveLoan) {
+    //         this.router.navigate(['/loan/warning-apply-loan']);
+    //       } else {
+    //         this.loadAccounts();
+    //       }
+    //     },
+    //     error: (err) => {
+    //       this.loadAccounts();
+    //     }
+    //   });
+    // });
+    this.loadAccounts();
     this.declaredIncomeControl.valueChanges.subscribe(() => {
       this.amountControl.setValidators([
         Validators.required,
@@ -229,34 +229,35 @@ export class ApplyNewLoanComponent implements OnInit {
     };
     this.loanForm.get('interestRate')?.setValue(  this.rateControl.value);
     loan.interestRate = this.rateControl.value;
-    this.loanService.createLoan(loan).subscribe({
-      next: (response: ApiResponseWrapper<Loan>) => {
-        const createdLoan = response.data;
-        // Sau khi tạo loan thành công, tạo InfoIncome
-        const infoIncome = {
-          infoId: null,
-          loanId:createdLoan.loanId ,
-          accountNumber: this.loanForm.value.incomeAccountNumber,
-          bankName: this.loanForm.value.bankName,
-          declaredIncome: this.loanForm.value.declaredIncome
-        };
-        this.loanService.createInfoIncome(infoIncome).subscribe({
-          next: () => {
-            this.loading = false;
-            this.toastr.success('Đăng ký khoản vay thành công!', 'Thành công');
-            this.onLoanCreated();
-          },
-          error: (err) => {
-            this.loading = false;
-            this.toastr.error('Tạo InfoIncome thất bại', 'Lỗi');
-          }
-        });
-      },
-      error: (httpError: HttpErrorResponse) => {
-        this.loading = false;
-        this.toastr.error( `Lỗi: ${httpError.error.message}`,'Lỗi');
-      }
-    });
+    console.log(loan);
+    // this.loanService.createLoan(loan).subscribe({
+    //   next: (response: ApiResponseWrapper<Loan>) => {
+    //     const createdLoan = response.data;
+    //     // Sau khi tạo loan thành công, tạo InfoIncome
+    //     const infoIncome = {
+    //       infoId: null,
+    //       loanId:createdLoan.loanId ,
+    //       accountNumber: this.loanForm.value.incomeAccountNumber,
+    //       bankName: this.loanForm.value.bankName,
+    //       declaredIncome: this.loanForm.value.declaredIncome
+    //     };
+    //     this.loanService.createInfoIncome(infoIncome).subscribe({
+    //       next: () => {
+    //         this.loading = false;
+    //         this.toastr.success('Đăng ký khoản vay thành công!', 'Thành công');
+    //         this.onLoanCreated();
+    //       },
+    //       error: (err) => {
+    //         this.loading = false;
+    //         this.toastr.error('Tạo InfoIncome thất bại', 'Lỗi');
+    //       }
+    //     });
+    //   },
+    //   error: (httpError: HttpErrorResponse) => {
+    //     this.loading = false;
+    //     this.toastr.error( `Lỗi: ${httpError.error.message}`,'Lỗi');
+    //   }
+    // });
   }
 
   onLoanCreated() {

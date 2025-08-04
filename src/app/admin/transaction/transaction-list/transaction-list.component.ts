@@ -40,7 +40,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./transaction-list.component.scss'],
   providers: [MessageService]
 })
-export class AdminTransactionListComponent implements OnInit {
+export class TransactionListComponent implements OnInit {
   // Account related
  
   customerName: string | null = null;
