@@ -24,7 +24,7 @@ export class LoanService {
     });
   }
   // 1. POST: Tạo khoản vay mới
-  createLoan(loan: Loan): Observable<ApiResponseWrapper<Loan>> {
+  createLoan(loan: any): Observable<ApiResponseWrapper<Loan>> {
     return this.http.post<ApiResponseWrapper<Loan>>(this.baseUrl, loan,{ headers: this.getAuthHeaders() });
   }
 

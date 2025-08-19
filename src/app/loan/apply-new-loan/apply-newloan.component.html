@@ -328,7 +328,22 @@
           </small>
         </div>
         <div class="form-field">
-          <label for="accountNumber">Tài khoản giải ngân</label>
+          <label for="loanType">Mục đích vay</label>
+          <p-dropdown
+            id="loanType"
+            formControlName="loanType"
+            [options]="loanTypeOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn mục đích vay"
+            [class.invalid]="loanForm.get('loanType')?.touched && loanForm.get('loanType')?.invalid">
+          </p-dropdown>
+          <small class="p-error" *ngIf="loanForm.get('loanType')?.touched && loanForm.get('loanType')?.hasError('required')">
+            Vui lòng chọn mục đích vay.
+          </small>
+        </div>
+        <div class="form-field">
+          <label for="accountNumber">Tài khoản thanh toán cho khoản vay</label>
           <p-dropdown
             id="accountNumber"
             formControlName="accountNumber"

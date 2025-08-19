@@ -86,12 +86,10 @@ export class ApplyNewLoanComponent implements OnInit {
   accounts: Account[] = [];
   loading = true; 
   computedRate: number | null = null;
-  bankOptions = [
-    { bankName: 'Vietcombank', bankCode: '970436' },
-    { bankName: 'Techcombank', bankCode: '970437' },
-    { bankName: 'BIDV', bankCode: '970438' },
-    { bankName: 'VietinBank', bankCode: '970439' },
-    { bankName: 'ACB', bankCode: '970440' },
+  loanTypeOptions = [
+    { label: 'Vay tiêu dùng', value: 'PERSONAL' },
+    { label: 'Vay thế chấp', value: 'MORTGAGE' },
+    { label: 'Vay mua xe', value: 'AUTO' },
   ];
 
   constructor(
@@ -105,7 +103,8 @@ export class ApplyNewLoanComponent implements OnInit {
       {
         accountNumber: ['', Validators.required],
         incomeProofFile: [null, Validators.required],
-        bankName: [null],
+        purpose: [null, Validators.required],
+        loanType: ['PERSONAL', Validators.required],
         declaredIncome: [
           null,
           [Validators.required, Validators.min( 5_000_000)]
@@ -213,24 +212,21 @@ export class ApplyNewLoanComponent implements OnInit {
       this.loanForm.markAllAsTouched();
       return;
     }
-    const loan: Loan = {
-      accountNumber: this.loanForm.value.accountNumber,
+    const loanPayload = {
+      disbursementAccountNumber: this.loanForm.value.accountNumber,
+      repaymentAccountNumber: this.loanForm.value.accountNumber,
       amount: this.loanForm.value.amount,
-      interestRate: this.loanForm.value.interestRate, 
+      interestRate: this.loanForm.value.interestRate,
       termMonths: this.loanForm.value.termMonths,
-      customerId: null,
-      loanId: null,
-      approvedAt: null,
-      createdAt: null,
-      repayments: null,
-      status:LoanStatus.PENDING,
-      rejectionReasons: null,
-      infoIncomes: null
+      loanType: this.loanForm.value.loanType,
+      // optional new fields
+      declaredIncome: this.loanForm.value.declaredIncome,
+      pathFile: null
     };
     this.loanForm.get('interestRate')?.setValue(  this.rateControl.value);
     loan.interestRate = this.rateControl.value;
 <<<<<<< HEAD
-    this.loanService.createLoan(loan).subscribe({
+    this.loanService.createLoan(loanPayload).subscribe({
       next: (response: ApiResponseWrapper<Loan>) => {
         const createdLoan = response.data;
         const file: File | null = this.loanForm.value.incomeProofFile;
