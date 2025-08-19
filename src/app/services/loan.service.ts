@@ -12,6 +12,7 @@ import { Account } from '../interfaces/account.interface';
 export class LoanService {
   // URL gốc của backend Java
   private readonly baseUrl = 'http://localhost:8888/api/loans';
+  private readonly fileUrl = 'http://localhost:8888/api/files';
 
   constructor(
     private http: HttpClient
@@ -85,17 +86,19 @@ export class LoanService {
   getAccountsByCurrentUser(): Observable<ApiResponseWrapper<Account[]>> {
     return this.http.get<ApiResponseWrapper<Account[]>>(`${this.baseUrl}/getAccounts`,{ headers: this.getAuthHeaders() });
   }
-  checkInfoIncome(infoIncome: any): Observable<ApiResponseWrapper<any>> {
-    return this.http.post<ApiResponseWrapper<any>>(`${this.baseUrl}/check-info-income`, infoIncome, { headers: this.getAuthHeaders() });
+  // S3 helpers
+  generatePresignedUrl(key: string, contentType?: string): Observable<string> {
+    const params = new URLSearchParams({ key, ...(contentType ? { contentType } : {}) });
+    return this.http.get(`${this.fileUrl}/generate-presigned-url?${params.toString()}`, { responseType: 'text' });
   }
-  createInfoIncome(infoIncome: any): Observable<ApiResponseWrapper<any>> {
-    return this.http.post<ApiResponseWrapper<any>>('http://localhost:8888/api/info-income', infoIncome, { headers: this.getAuthHeaders() });
+  updateFilePath(loanId: number, filePath: string, declaredIncome?: number): Observable<ApiResponseWrapper<Loan>> {
+    const body: any = { loanId, filePath };
+    if (declaredIncome != null) body.declaredIncome = declaredIncome;
+    return this.http.post<ApiResponseWrapper<Loan>>(`${this.fileUrl}/update-file-path`, body, { headers: this.getAuthHeaders() });
   }
-  updateInfoIncome(infoId: number, infoIncome: any): Observable<ApiResponseWrapper<any>> {
-    return this.http.put<ApiResponseWrapper<any>>(`http://localhost:8888/api/info-income/${infoId}`, infoIncome, { headers: this.getAuthHeaders() });
-  }
-  getInfoIncomesByLoanId(loanId: number): Observable<ApiResponseWrapper<any>> {
-    return this.http.get<ApiResponseWrapper<any>>(`http://localhost:8888/api/info-income/loan/${loanId}`, { headers: this.getAuthHeaders() });
+  getDisplayFileUrl(filePath: string): string {
+    const params = new URLSearchParams({ filePath });
+    return `${this.fileUrl}/display-file?${params.toString()}`;
   }
   // API thống kê cho dashboard admin
   getTotalDisbursedSystem(): Observable<ApiResponseWrapper<number>> {

@@ -321,33 +321,10 @@
           </small>
         </div>
         <div class="form-field">
-          <label for="bankName">Ngân hàng chứng minh thu nhập</label>
-          <p-dropdown
-            id="bankName"
-            formControlName="bankName"
-            [options]="bankOptions"
-            optionLabel="bankName"
-            optionValue="bankName"
-            placeholder="Chọn ngân hàng"
-            [class.invalid]="loanForm.get('bankName')?.touched && loanForm.get('bankName')?.invalid">
-          </p-dropdown>
-          <small class="p-error" *ngIf="loanForm.get('bankName')?.touched && loanForm.get('bankName')?.hasError('required')">
-            Vui lòng chọn ngân hàng.
-          </small>
-        </div>
-        <div class="form-field">
-          <label for="incomeAccountNumber">Số tài khoản ngân hàng chứng minh thu nhập</label>
-          <p-inputNumber
-            id="incomeAccountNumber"
-            type="text"
-            formControlName="incomeAccountNumber"
-            placeholder="Nhập số tài khoản ngân hàng chứng minh thu nhập"
-            [class.invalid]="loanForm.get('incomeAccountNumber')?.touched && loanForm.get('incomeAccountNumber')?.invalid"
-            [style]="{ width: '100%' }"
-            [inputStyle]="{ width: '100%' }">
-          </p-inputNumber>
-          <small class="p-error" *ngIf="loanForm.get('incomeAccountNumber')?.touched && loanForm.get('incomeAccountNumber')?.hasError('required')">
-            Vui lòng nhập số tài khoản ngân hàng chứng minh thu nhập.
+          <label for="incomeProofFile">Ảnh/FILE chứng minh thu nhập</label>
+          <input id="incomeProofFile" type="file" accept="image/*,application/pdf" (change)="loanForm.get('incomeProofFile')?.setValue($any($event.target).files[0] || null)" />
+          <small class="p-error" *ngIf="loanForm.get('incomeProofFile')?.touched && loanForm.get('incomeProofFile')?.hasError('required')">
+            Vui lòng chọn ảnh/file chứng minh thu nhập.
           </small>
         </div>
         <div class="form-field">

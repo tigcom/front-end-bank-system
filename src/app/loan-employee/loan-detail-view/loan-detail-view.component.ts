@@ -73,6 +73,7 @@ export class LoanDetailViewComponent implements OnInit {
   customerDetail: CustomerResponse | null = null;
   transactionHistory: TransactionDto[] = [];
   loadingTransactions = false;
+  incomeProofUrl: string | null = null;
 
   loanForm = new FormGroup({
     amount: new FormControl<number | null>(null, [Validators.required, Validators.min(1000000)]),
@@ -110,8 +111,9 @@ export class LoanDetailViewComponent implements OnInit {
           this.loanService.getInfoIncomesByLoanId(data.loanId).subscribe({
             next: (res) => {
               this.loanDetail!.infoIncomes = res.data || [];
-              if (this.firstInfoIncome && this.firstInfoIncome.accountNumber && this.firstInfoIncome.bankName) {
-                this.fetchTransactionHistory(this.firstInfoIncome);
+              // If backend now stores pathFile on loan, prepare a view URL
+              if (this.loanDetail && (this.loanDetail as any).pathFile) {
+                this.incomeProofUrl = this.loanService.getDisplayFileUrl((this.loanDetail as any).pathFile);
               }
             },
             error: () => {
@@ -261,18 +263,5 @@ export class LoanDetailViewComponent implements OnInit {
     }
   }
 
-  fetchTransactionHistory(infoIncome: any) {
-    this.loadingTransactions = true;
-    this.loanService.checkInfoIncome(infoIncome).subscribe({
-      next: (res: any) => {
-        this.transactionHistory = res.data || [];
-        this.loadingTransactions = false;
-      },
-      error: (err: any) => {
-        this.transactionHistory = [];
-        this.loadingTransactions = false;
-        this.toastr.error('Không lấy được lịch sử giao dịch thu nhập', 'Lỗi');
-      }
-    });
-  }
+  // Transaction history removed in new flow
 }

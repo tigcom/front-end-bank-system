@@ -104,8 +104,8 @@ export class ApplyNewLoanComponent implements OnInit {
     this.loanForm = this.fb.group(
       {
         accountNumber: ['', Validators.required],
-        incomeAccountNumber: ['', Validators.required],
-        bankName: [null, Validators.required],
+        incomeProofFile: [null, Validators.required],
+        bankName: [null],
         declaredIncome: [
           null,
           [Validators.required, Validators.min( 5_000_000)]
@@ -232,23 +232,40 @@ export class ApplyNewLoanComponent implements OnInit {
     this.loanService.createLoan(loan).subscribe({
       next: (response: ApiResponseWrapper<Loan>) => {
         const createdLoan = response.data;
-        // Sau khi tạo loan thành công, tạo InfoIncome
-        const infoIncome = {
-          infoId: null,
-          loanId:createdLoan.loanId ,
-          accountNumber: this.loanForm.value.incomeAccountNumber,
-          bankName: this.loanForm.value.bankName,
-          declaredIncome: this.loanForm.value.declaredIncome
-        };
-        this.loanService.createInfoIncome(infoIncome).subscribe({
-          next: () => {
-            this.loading = false;
-            this.toastr.success('Đăng ký khoản vay thành công!', 'Thành công');
-            this.onLoanCreated();
+        const file: File | null = this.loanForm.value.incomeProofFile;
+        const declaredIncome = this.loanForm.value.declaredIncome;
+        if (!file) {
+          this.loading = false;
+          this.toastr.success('Đăng ký khoản vay thành công!', 'Thành công');
+          this.onLoanCreated();
+          return;
+        }
+        const key = `loans/${createdLoan.loanId}/${Date.now()}_${encodeURIComponent(file.name)}`;
+        this.loanService.generatePresignedUrl(key, file.type).subscribe({
+          next: (url: string) => {
+            fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
+              .then(res => {
+                if (!res.ok) throw new Error('Upload failed');
+                this.loanService.updateFilePath(createdLoan.loanId!, key, declaredIncome).subscribe({
+                  next: () => {
+                    this.loading = false;
+                    this.toastr.success('Đăng ký khoản vay thành công!', 'Thành công');
+                    this.onLoanCreated();
+                  },
+                  error: () => {
+                    this.loading = false;
+                    this.toastr.error('Cập nhật file path thất bại', 'Lỗi');
+                  }
+                });
+              })
+              .catch(() => {
+                this.loading = false;
+                this.toastr.error('Tải file lên S3 thất bại', 'Lỗi');
+              });
           },
-          error: (err) => {
+          error: () => {
             this.loading = false;
-            this.toastr.error('Tạo InfoIncome thất bại', 'Lỗi');
+            this.toastr.error('Không tạo được URL upload', 'Lỗi');
           }
         });
       },

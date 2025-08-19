@@ -256,45 +256,20 @@
           </div>
         </div>
       </div>
-      <!-- Transaction History -->
-      <div class="loan-info-row" >
+      <!-- Income proof preview -->
+      <div class="loan-info-row">
         <div class="info-card">
           <div class="card-header">
-            <i class="pi pi-history"></i>
-            <h2>Lịch sử giao dịch thu nhập</h2>
-            <ng-container *ngIf="firstInfoIncome">
-              ({{ firstInfoIncome.bankName }} - {{ firstInfoIncome.accountNumber }} - 
-              {{ formatCurrency(firstInfoIncome.declaredIncome || 0) }})
+            <i class="pi pi-image"></i>
+            <h2>Chứng minh thu nhập</h2>
+          </div>
+          <div>
+            <ng-container *ngIf="incomeProofUrl; else noProof">
+              <img [src]="incomeProofUrl" alt="Income Proof" style="max-width: 100%; max-height: 400px; object-fit: contain;" />
             </ng-container>
-          </div>
-          <div *ngIf="loadingTransactions" class="loading-transactions">
-            <p-progressSpinner styleClass="custom-spinner"></p-progressSpinner>
-            <span>Đang tải lịch sử giao dịch...</span>
-          </div>
-          <div *ngIf="!loadingTransactions && transactionHistory.length === 0">
-            <span>Không có giao dịch thu nhập nào.</span>
-          </div>
-          <div *ngIf="!loadingTransactions && transactionHistory.length > 0">
-            <p-table [value]="transactionHistory" responsiveLayout="scroll" [tableStyle]="{'min-width': '40rem'}">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Mã GD</th>
-                  <th>Số tiền</th>
-                  <th>Thời gian</th>
-                  <th>Mô tả</th>
-                  <th>Loại</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-tx>
-                <tr>
-                  <td>{{ tx.id }}</td>
-                  <td>{{ formatCurrency(tx.amount) }}</td>
-                  <td>{{ formatDate(tx.timestamp) }}</td>
-                  <td>{{ tx.description }}</td>
-                  <td>{{ tx.type }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
+            <ng-template #noProof>
+              <span>Không có tệp chứng minh thu nhập.</span>
+            </ng-template>
           </div>
         </div>
       </div>
