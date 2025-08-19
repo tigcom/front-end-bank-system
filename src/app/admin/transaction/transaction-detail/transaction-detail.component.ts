@@ -10,7 +10,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
-import { TransactionService } from '../../services/transaction.service';
+import { TransactionService } from '../../../services/transaction.service';
 
 @Component({
   selector: 'app-transaction-detail',
@@ -26,7 +26,7 @@ import { TransactionService } from '../../services/transaction.service';
   styleUrls: ['./transaction-detail.component.scss'],
   providers: [MessageService]
 })
-export class TransactionDetailComponent implements OnInit {
+export class AdminTransactionDetailComponent implements OnInit {
   transaction: any = null;
   error: string | null = null;
   fromCustomerName: string = '';
@@ -165,7 +165,7 @@ removeVietnameseTones(str: string): string {
       .replace(/đ/g, 'd').replace(/Đ/g, 'D');
   }
   goBack() {
-    this.router.navigate(['/transactions/history'], {       
+    this.router.navigate(['/admin/transactions'], {       
         queryParams: { accountNumber: this.accountNumber }
       });
   }

@@ -1,23 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
-import { TransactionService } from '../../services/transaction.service';
+import { TransactionService } from '../../../services/transaction.service';
 import { MessageService } from 'primeng/api';
 import { Location } from '@angular/common';
-import { ConfirmTransactionComponent } from '../confirm/confirm-transaction.component.ts';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CardModule } from 'primeng/card';
 import { Toast } from 'primeng/toast';
 import { Textarea } from 'primeng/textarea';
+import { ConfirmTransactionComponent } from '../../../transactions/confirm/confirm-transaction.component.ts';
+import { debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-deposit',
-  templateUrl: './deposit.component.html',
-  styleUrls: ['./deposit.component.scss'],
+    selector: 'app-transaction-deposit',
+  templateUrl: './transaction-deposit.component.html',
+  styleUrls: ['./transaction-deposit.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -30,11 +37,11 @@ import { Textarea } from 'primeng/textarea';
     DropdownModule,
     CardModule,
     Toast,
-    Textarea
+    Textarea,
   ],
-  providers: [MessageService]
+  providers: [MessageService],
 })
-export class DepositComponent implements OnInit {
+export class TransactionDepositComponent implements OnInit {
   depositForm!: FormGroup;
   submitted = false;
 
@@ -50,7 +57,6 @@ export class DepositComponent implements OnInit {
     type: string;
   } | null = null;
 
-  
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
@@ -59,64 +65,59 @@ export class DepositComponent implements OnInit {
   ) {
     this.depositForm = this.fb.group({
       toAccountNumber: ['', Validators.required],
-      amount: [null, [Validators.required, Validators.min(1000)]],
+      amount: [null, [Validators.required, Validators.min(1)]],
       currency: [this.currencyOptions[0].currencyCode, Validators.required],
       description: [''],
     });
     this.selectedBalance = this.toAccountOptions[0]?.balance || null;
-    
   }
-  
+
   toAccountOptions: any[] = [];
-  toCustomerName: string | null = null; 
+  toCustomerName: string | null = null;
   fromCustomerName: string | null = null;
 
   ngOnInit(): void {
-    this.transactionService.getAccountForCustomer().subscribe({
-      next: (res) => {
-        console.log(res);
-        this.toAccountOptions = res.data.map((acc: any) => ({
-          accountNumber: acc.accountNumber,
-          accountDescription: `Tài khoản thanh toán - ${acc.accountNumber}`,
-          balance: acc.balance
-        }));
-        if (this.toAccountOptions.length > 0) {
-          this.depositForm.patchValue({
-            toAccountNumber: this.toAccountOptions[0].accountNumber,
-          });
-          this.selectedBalance = this.toAccountOptions[0].balance;
-        
-        }
-      },
-      error: (err) => {
-        console.error('Lỗi khi lấy danh sách tài khoản:', err);
-      }
-    });
-    // Get Current Customer
-    this.transactionService.getCurrentCustomer().subscribe({
-      next: (res) => {
-        this.toCustomerName = this.removeVietnameseTones(res.data.fullName.toUpperCase());
-        this.depositForm.patchValue({
-          description: this.toCustomerName + ' NAP TIEN'
-        });
-      },
-      error: (err) => {
-        console.error('Lỗi khi lấy khách hàng hiện tại:', err);
-      }
-    });
-
-
+    this.depositForm
+      .get('toAccountNumber')
+      ?.valueChanges.pipe(
+        debounceTime(300), // 1. Đợi 300ms sau lần nhập cuối cùng, tránh gọi API quá nhiều khi người dùng gõ liên tục
+        distinctUntilChanged(), // 2. Chỉ tiếp tục nếu giá trị thay đổi so với lần trước, tránh gọi API lặp lại với giá trị cũ
+        switchMap((toAccountNumber) => {
+          if (!toAccountNumber) {
+            this.toCustomerName = null;
+            return of(null);
+          }
+          return this.transactionService
+            .getCustomerByAccountNumber(toAccountNumber)
+            .pipe(
+              map((res) => res.result.fullName),
+              catchError((err) => {
+                this.toCustomerName = null;
+                return of(null);
+              })
+            );
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.toCustomerName = this.removeVietnameseTones(res.toUpperCase());
+          }
+        },
+        error: (err) => {
+          console.error('Lỗi khi lấy khách hàng:', err);
+        },
+      });
   }
 
   currencyOptions = [
     { currencyName: 'Việt Nam Đồng (VND)', currencyCode: 'VND' },
     { currencyName: 'US Dollar (USD)', currencyCode: 'USD' },
     { currencyName: 'Euro (EUR)', currencyCode: 'EUR' },
-    
   ];
-  
+
   selectedBalance: number | null = null;
-  
+
   showConfirmForm = false;
   onAccountChange(event: any) {
     const selectedAccountNumber = event.value;
@@ -124,17 +125,15 @@ export class DepositComponent implements OnInit {
       (acc) => acc.accountNumber === selectedAccountNumber
     );
     this.selectedBalance = account ? account.balance : null;
-
   }
-  
-  
+
   onSubmit(): void {
     this.submitted = true;
     if (this.depositForm.valid) {
       this.someDepositData = {
         fromAccountNumber: '',
         toAccountNumber: String(this.depositForm.get('toAccountNumber')?.value),
-        amount: this. depositForm.get('amount')?.value,
+        amount: this.depositForm.get('amount')?.value,
         description: this.depositForm.get('description')?.value,
         currency: this.depositForm.get('currency')?.value,
         referenceCode: '',
@@ -145,23 +144,23 @@ export class DepositComponent implements OnInit {
       this.transactionService.deposit(this.someDepositData).subscribe({
         next: (res) => {
           console.log('Phản hồi từ server:', res);
-          this.showSuccess('Giao dịch nộp tiền đã khởi tạo thành công. Vui lòng xác nhận OTP.');
+          this.showSuccess(
+            'Giao dịch nộp tiền đã khởi tạo thành công. Vui lòng xác nhận OTP.'
+          );
           if (this.someDepositData) {
             this.someDepositData.referenceCode = res.result.referenceCode;
           }
-          this.showConfirmForm = true;  
+          this.showConfirmForm = true;
         },
-        error: (err) => { 
+        error: (err) => {
           console.error('Lỗi khi gửi dữ liệu:', err.message);
-          this.showError('Nộp tiền thất bại: ' + (err.error?.message || err.message));
-        }
+          this.showError(
+            'Nộp tiền thất bại: ' + (err.error?.message || err.message)
+          );
+        },
       });
-        }
-
-    
+    }
   }
-  
-
 
   showSuccess(message: string) {
     this.messageService.add({
@@ -170,7 +169,7 @@ export class DepositComponent implements OnInit {
       detail: message,
     });
   }
-  
+
   showError(message: string) {
     this.messageService.add({
       severity: 'error',
@@ -185,9 +184,10 @@ export class DepositComponent implements OnInit {
   }
   removeVietnameseTones(str: string): string {
     return str
-      .normalize('NFD') 
-      .replace(/[\u0300-\u036f]/g, '') 
-      .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D');
   }
   goBack(): void {
     this.location.back();

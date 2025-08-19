@@ -115,83 +115,83 @@ export class AccountStatisticComponent implements OnInit {
   private accountService = inject(AccountService);
   dashboardData: DashboardData = {
     accountStatistics: {
-      totalAccounts: 12,
-      accountsByType: {
-        "CREDIT": 2,
-        "PAYMENT": 4,
-        "MASTER": 1,
-        "SAVING": 5
+      totalAccounts: 0,
+      accountsByType: { 
+        "CREDIT": 0,
+        "PAYMENT": 0,
+        "MASTER": 0,
+        "SAVING": 0
       },
       accountsByStatus: {
-        "REGISTRATION_ERROR": 1,
-        "ACTIVE": 9,
-        "CLOSED": 2
+        "REGISTRATION_ERROR": 0,
+        "ACTIVE": 0,
+        "CLOSED": 0
       },
-      activeAccounts: 9,
-      inactiveAccounts: 3
+      activeAccounts: 0,
+      inactiveAccounts: 0
     },
     savingsStatistics: {
-      totalSavingsAccounts: 5,
-      totalSavingsBalance: 39000000.00,
+      totalSavingsAccounts: 0,
+      totalSavingsBalance: 0,
       accountsByTerm: {
-        "18": 1,
-        "36": 1,
-        "12": 3
+        "18": 0,
+        "36": 0,
+        "12": 0
       },
       accountsByInterestPaymentType: {
-        "AT_MATURITY": 3,
-        "MONTHLY": 2
+        "AT_MATURITY": 0,
+        "MONTHLY": 0
       },
       accountsByRenewOption: {
-        "AUTO_RENEW": 5
+        "AUTO_RENEW": 0
       },
       accountsNearMaturity: 0,
-      averageBalance: 7800000.00
+      averageBalance: 0
     },
     creditRequestStatistics: {
-      totalCreditRequests: 2,
+      totalCreditRequests: 0,
       requestsByStatus: {
-        "ERROR": 1,
-        "APPROVED": 1
+        "ERROR": 0,
+        "APPROVED": 0
       },
       pendingRequests: 0,
-      approvedRequests: 1,
+      approvedRequests: 0,
       rejectedRequests: 0,
-      approvalRate: 100.0,
-      averageRequestedIncome: 20000000.00,
+      approvalRate: 0,
+      averageRequestedIncome: 0,
       requestsByCardType: {
-        "MASTER_PLATINUM": 1,
-        "VISA_PLUS": 1
+        "MASTER_PLATINUM": 0,
+        "VISA_PLUS": 0
       }
     },
-    totalCustomers: 3,
-    totalAssets: 39000000.00,
-    newAccountsThisMonth: 100 ,
-    newAccountsLastMonth: 10,
-    monthlyGrowthRate: 180.0,
+    totalCustomers: 0,
+    totalAssets: 0,
+    newAccountsThisMonth: 0 ,
+    newAccountsLastMonth: 0,
+    monthlyGrowthRate: 0,
     topProducts: [
       {
         productName: "SAVING",
         productType: "ACCOUNT",
-        accountCount: 5,
+        accountCount: 0,
         totalValue: 0
       },
       {
         productName: "PAYMENT",
         productType: "ACCOUNT",
-        accountCount: 4,
+        accountCount: 0,
         totalValue: 0
       },
       {
         productName: "CREDIT",
         productType: "ACCOUNT",
-        accountCount: 2,
+        accountCount: 0,
         totalValue: 0
       },
       {
         productName: "MASTER",
         productType: "ACCOUNT",
-        accountCount: 1,
+        accountCount: 0,
         totalValue: 0
       }
     ],
@@ -200,16 +200,17 @@ export class AccountStatisticComponent implements OnInit {
         activityType: "ACCOUNT_CREATION",
         description: "Tài khoản mới được tạo trong 24h qua",
         timestamp: "2025-07-02T20:43:12.670276500",
-        count: 2
+        count: 0
       },
       {
         activityType: "CREDIT_REQUEST",
         description: "Yêu cầu mở thẻ tín dụng mới trong 24h qua",
         timestamp: "2025-07-02T20:43:12.682937900",
-        count: 2
+        count: 0
       }
     ]
   };
+
 
   // Chart configurations
   pieChartData: any;
@@ -303,8 +304,17 @@ export class AccountStatisticComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.loadAccountStatistics();
     this.initializeCharts();
     this.loadAccountCreationStatistics();
+  }
+
+  private loadAccountStatistics() {
+    this.accountService.getAccountStatistics().subscribe((data) => {
+      console.log(data);
+      this.dashboardData = data;
+      this.initializeCharts();
+    });
   }
 
   private initializeCharts() {

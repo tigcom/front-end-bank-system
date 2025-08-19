@@ -1,0 +1,300 @@
+.main-content {
+  padding: 0 8px;
+  background: #f6f8fa;
+  overflow: unset;
+}
+
+.credit-header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px 30px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+  }
+}
+
+.credit-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 5px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 12px 18px;
+  border-radius: 10px;
+  width: 400px;
+  border: 2px solid #e9ecef;
+  transition: border-color 0.3s ease;
+
+  &:focus-within {
+    border-color: #667eea;
+    background: #fff;
+  }
+
+  i {
+    margin-right: 12px;
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+
+  input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
+    color: #495057;
+
+    &::placeholder {
+      color: #6c757d;
+    }
+  }
+}
+
+.stats-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  .pending-count {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+}
+
+.credit-table-card {
+  background: #fff;
+  padding: 16px 8px;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(44, 62, 80, 0.1);
+  overflow-x: auto;
+  overflow-y: visible;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.credit-table {
+  width: 100%;
+  min-width: 1600px;
+  table-layout: fixed;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 8px;
+    height: 55px;
+  }
+
+  th {
+    font-weight: 600;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 0.9rem;
+  }
+
+  tbody tr {
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #f1f6fb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+.p-chip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-radius: 20px !important;
+  height: 28px;
+}
+
+.chip-active {
+  background-color: #27ae60 !important;
+  color: #fff !important;
+}
+
+.chip-inactive {
+  background-color: #e74c3c !important;
+  color: #fff !important;
+}
+
+.chip-pending {
+  background-color: #f39c12 !important;
+  color: #fff !important;
+}
+
+.card-type-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  
+  &.badge-master-platinum {
+    background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
+    color: #fff;
+  }
+  
+  &.badge-visa-gold {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: #fff;
+  }
+  
+  &.badge-mastercard-classic {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: #fff;
+  }
+  
+  &.badge-visa-platinum {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: #fff;
+  }
+}
+
+.note-text {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 120px;
+  
+  &.note-pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  &.note-error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  &.note-approved {
+    background-color: #d1edff;
+    color: #0c5460;
+  }
+  
+  &.note-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  .p-button-rounded {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1rem !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    &.p-button-success:hover {
+      box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+    }
+
+    &.p-button-danger:hover {
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+.no-data-row {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+// Responsive adjustments
+@media (max-width: 1400px) {
+  .credit-table {
+    min-width: 1400px;
+  }
+  
+  .search-bar {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0 4px;
+  }
+  
+  .credit-header-card {
+    padding: 20px;
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+  
+  .credit-table-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .search-bar {
+    width: 100%;
+  }
+  
+  .stats-info {
+    justify-content: center;
+  }
+}

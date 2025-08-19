@@ -11,7 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CalendarModule } from 'primeng/calendar';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router  } from '@angular/router';
 import { StepperComponent } from '../../../../components/stepper/stepper.component';
 import { creditCards } from '../../../../interfaces/account.interface';
 import { AccountService } from '../../../../services/account/account.service';
@@ -90,7 +90,8 @@ export class ApplyCreditComponent implements OnInit {
     private messageService: MessageService,
     private route: ActivatedRoute,
     private accountService: AccountService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private router: Router
   ) {
     this.formCredit = this.fb.group({
       occupation: ['', Validators.required],
@@ -305,13 +306,8 @@ export class ApplyCreditComponent implements OnInit {
   }
 
   // Reset form để đăng ký mới
-  resetAll() {
-    this.formCredit.reset();
-    this.step = 1;
-    this.submitted = false;
-    this.otpCode = '';
-    this.success = false;
-    this.showOtherJob = false;
-    if (this.otpInterval) clearInterval(this.otpInterval);
+ 
+  goToDashboard() {
+    this.router.navigate(['/customer-dashboard']);
   }
 }

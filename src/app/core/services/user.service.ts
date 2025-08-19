@@ -28,7 +28,7 @@ export class UserService {
 
   getUsername(): string | null {
     const token = this.authService.getToken();
-    console.log("token: " + token)
+    // console.log("token: " + token)
     if (!token) return null;
 
     try {

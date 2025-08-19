@@ -1,0 +1,105 @@
+<div class="dashboard-transaction">
+  <div class="filter-row" style="margin-bottom: 20px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+    <label>Từ ngày:</label>
+    <input type="date" [(ngModel)]="startDate" (change)="onDateChange()">
+    <label>Đến ngày:</label>
+    <input type="date" [(ngModel)]="endDate" (change)="onDateChange()">
+    
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card border-orange">
+      <div class="stat-number">{{ data?.totalTransactions }}</div>
+      <div class="stat-label">Tổng số giao dịch</div>
+    </div>
+    <div class="stat-card border-blue">
+      <div class="stat-number">{{ data?.totalAmount | number:'1.0-0' }} đ</div>
+      <div class="stat-label">Tổng số tiền giao dịch</div>
+    </div>
+    <div class="stat-card border-green">
+      <div class="stat-number"><p-badge [value]="data?.successCount || 0" severity="success"></p-badge></div>
+      <div class="stat-label">Thành công</div>
+    </div>
+    <div class="stat-card border-red">
+      <div class="stat-number"><p-badge [value]="data?.failedCount || 0" severity="danger"></p-badge></div>
+      <div class="stat-label">Thất bại</div>
+    </div>
+    <div class="stat-card border-cyan">
+      <div class="stat-number"><p-badge [value]="data?.pendingCount || 0" severity="info"></p-badge></div>
+      <div class="stat-label">Đang chờ</div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-card">
+      <h3>Thống kê theo loại giao dịch</h3>
+      <p-table [value]="data?.transactionTypeSummary || []" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Loại giao dịch</th>
+            <th>Số lượng</th>
+            <th>Tổng tiền</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>{{ transactionTypeVi(row.transactionType) }}</td>
+            <td>{{ row.count }}</td>
+            <td>{{ row.totalAmount | number:'1.0-0' }} đ</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="section-card">
+      <h3>Top khách hàng giao dịch</h3>
+      <p-table [value]="data?.topCustomers || []" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Mã KH</th>
+            <th>Tên khách hàng</th>
+            <th>Số giao dịch</th>
+            <th style="width: 140px;">Tổng tiền</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>{{ row.cifCode }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.transactionCount }}</td>
+            <td>{{ row.totalAmount | number:'1.0-0' }} đ</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <h3>5 giao dịch gần nhất</h3>
+    <p-table [value]="data?.latestTransactions || []" [responsiveLayout]="'scroll'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Mã GD</th>
+          <th>Từ TK</th>
+          <th>Đến TK</th>
+          <th style="width: 140px;">Số tiền</th>
+          <th style="width: 200px;">Loại</th>
+          <th>Trạng thái</th>
+          <th>Thời gian</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.transactionId }}</td>
+          <td>{{ row.fromAccount }}</td>
+          <td>{{ row.toAccount }}</td>
+          <td>{{ row.amount | number:'1.0-0' }} đ</td>  
+          <td>{{ row.type }}</td>
+          <td>
+            <p-badge [value]="row.status" [severity]="getStatusSeverity(row.status)"></p-badge>
+          </td>
+          <td>{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

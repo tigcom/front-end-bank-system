@@ -66,8 +66,8 @@ export class LoginComponent implements OnInit {
 
   initForm(): void {
     this.loginForm = this.fb.group({
-      username: ['test21', [Validators.required]],
-      password: ['290801Bin@', [Validators.required, Validators.minLength(6)]],
+      username: ['test123', [Validators.required]],
+      password: ['123456Aa@', [Validators.required, Validators.minLength(6)]],
       captcha: ['', [Validators.required]] // Thêm field captcha
     });
   }

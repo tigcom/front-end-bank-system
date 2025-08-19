@@ -1,0 +1,102 @@
+<div class="main-content">
+  <p-toast position="top-right"></p-toast>
+  
+  <!-- Header Card -->
+  <div class="credit-header-card">
+    <h2>Quản lý yêu cầu thẻ tín dụng</h2>
+    <p>Duyệt và quản lý các yêu cầu đăng ký thẻ tín dụng từ khách hàng</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="credit-table-header">
+    <div class="search-bar">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText placeholder="Tìm kiếm theo tên, email, mã khách hàng, CCCD, SĐT..." [(ngModel)]="keyword" (ngModelChange)="onSearch()" />
+    </div>
+    <div class="stats-info">
+      <div class="pending-count">
+        Tổng: {{ totalElements }} yêu cầu
+      </div>
+    </div>
+  </div>
+
+  <!-- Credit Requests Table -->
+  <div class="credit-table-card">
+    <p-table
+      [value]="creditRequests"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalElements"
+      [lazy]="true"
+      [loading]="isLoading"
+      (onLazyLoad)="onPageChange($event)"
+      [responsiveLayout]="'scroll'"
+      [rowsPerPageOptions]="[5,10,25,100]"
+      [first]="pageIndex * pageSize"
+      styleClass="p-datatable-gridlines credit-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 20px">STT</th>
+          <th style="width: 350px">Họ và tên</th>
+          <th style="width: 140px">CCCD</th>
+          <th style="width: 150px">Số điện thoại</th>
+          <th style="width: 150px">Thu nhập</th>
+          <th style="width: 180px">Loại thẻ</th>
+          <th style="width: 120px">Trạng thái</th>
+          <th style="width: 300px">Ghi chú</th>
+          <th style="width: 120px">Hành động</th>
+        </tr>
+      </ng-template>
+             <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+         <tr>
+           <td>{{ getRowIndex(rowIndex) }}</td>
+           <td>{{ row.fullname }}</td>
+           <td>{{ row.identityNumber }}</td>
+           <td>{{ row.phoneNumber || '-' }}</td>
+           <td>{{ formatCurrency(row.monthlyIncome) }}</td>
+           <td>
+             <span class="card-type-badge" [ngClass]="'badge-' + row.cartTypeId.toLowerCase().replace('_', '-')">
+               {{ row.cartTypeId.replace('_', ' ') }}
+             </span>
+           </td>
+           <td>
+             <p-chip [class]="getStatusSeverity(row.status)">
+               {{ row.status }}
+             </p-chip>
+           </td>
+           <td>
+             <span class="note-text" [ngClass]="getNoteClass(row.status)">{{ getNote(row.status) }}</span>
+           </td>
+           <td>
+             <div class="action-buttons">
+               <button 
+                 pButton 
+                 icon="pi pi-check" 
+                 class="p-button-rounded p-button-success p-mr-2" 
+                 (click)="approveCreditRequest(row.id)" 
+                 pTooltip="Duyệt yêu cầu"
+                 [disabled]="row.status === 'APPROVED'">
+               </button>
+               <button 
+                 pButton 
+                 icon="pi pi-times" 
+                 class="p-button-rounded p-button-danger" 
+                 (click)="rejectCreditRequest(row.id)" 
+                 pTooltip="Từ chối yêu cầu"
+                 [disabled]="row.status === 'REJECTED'">
+               </button>
+             </div>
+           </td>
+         </tr>
+       </ng-template>
+             <ng-template pTemplate="emptymessage">
+         <tr>
+           <td colspan="11" class="no-data-row">
+             ❗ Không có yêu cầu thẻ tín dụng phù hợp với bộ lọc "<strong>{{ keyword }}</strong>"
+           </td>
+         </tr>
+       </ng-template>
+    </p-table>
+  </div>
+</div>

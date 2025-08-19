@@ -24,12 +24,12 @@
               <i class="pi pi-users"></i>
               <span>Customer Dashboard</span>
             </li>
-            <li class="dropdown-item" [class.active]="isActive('/dashboard/account')" (click)="navigateTo('/dashboard/customer')">
+            <li class="dropdown-item" [class.active]="isActive('/dashboard/account')" (click)="navigateTo('/dashboard/account')">
               <i class="pi pi-credit-card"></i>
               <span>Account Dashboard</span>
             </li>
-            <li class="dropdown-item" [class.active]="isActive('/dashboard/transactin')" (click)="navigateTo('/dashboard/customer')">
-              <i class="pi pi-verified"></i>
+            <li class="dropdown-item" [class.active]="isActive('/dashboard/transaction')" (click)="navigateTo('/dashboard/transaction')">
+              <i class="pi pi-money-bill"></i>
               <span>Transaction Dashboard</span>
             </li>
             <li class="dropdown-item" [class.active]="isActive('/admin/loan-dashboard')" (click)="navigateTo('/admin/loan-dashboard')">
@@ -59,6 +59,22 @@
             <span (click)="navigateTo('/employee/loans')">Quản Lý Khoản Vay</span>
           </li>
           
+          <li class="menu-item" [class.active]="isActive('/credit-requests')">
+            <i class="pi pi-credit-card"></i>
+            <span (click)="navigateTo('credit-requests')">Yêu cầu thẻ tín dụng</span>
+
+          <li class="menu-item" [class.active]="isActive('/admin/transactions')">
+            <i class="pi pi-money-bill"></i>
+            <span (click)="navigateTo('/admin/transactions')">Danh sách giao dịch</span>
+          </li>
+          <li class="menu-item" [class.active]="isActive('/admin/transactions/deposit')">
+            <i class="pi pi-money-bill"></i>
+            <span (click)="navigateTo('/admin/transactions/deposit')">Nạp tiền</span>
+          </li>
+          <li class="menu-item" [class.active]="isActive('/employee/loans')">
+            <i class="pi pi-server"></i>
+            <span (click)="navigateTo('/employee/loans')">Quản lý khoản vay</span>
+          </li>
         </ul>
       </div>
       <div class="menu-section">

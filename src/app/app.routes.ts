@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { TransferComponent } from './transactions/transfer/transfer.component';
 import { TransactionHomeComponent } from './transactions/transaction-home/transaction-home.component';
-import { DepositComponent } from './transactions/deposit/deposit.component';
 import { WithdrawComponent } from './transactions/withdraw/withdraw.component';
 import { TransactionResultComponent } from './transactions/results/transaction-result.component';
 import { TransactionHistoryComponent } from './transactions/history/transaction-history.component';
@@ -28,7 +27,7 @@ import { VerifyOtpComponent } from './auth/verify-otp/verify-otp.component';
 import { CustomerListComponent } from './admin/customer-list/customer-list.component';
 import { CustomerDetailAdminComponent } from './admin/customer-detail/customer-detail-admin.component';
 import { ChangePasswordComponent } from './auth/change-password/change-password.component';
-import { TransactionListComponent } from './admin/transaction/transaction-list/transaction-list.component';
+
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { ExternalTransferComponent } from './transactions/external-transfer/external-transfer.component';
 import { OrverviewLoanComponent } from './loan/my-loans-overview/orverview-loan.component';
@@ -56,7 +55,13 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { DashboardCustomerComponent } from './admin/admin-dashboard/dashboard-customer.component';
 import { KycManagerComponent } from './admin/kyc-manager/kyc-manager.component';
 import { DashboardLoanAdminComponent } from './loan/dashboard-loan-admin/dashboard-loan-admin.component';
-export const routes: Routes = [
+import { AccountStatisticComponent } from './admin/account-statistic/account-statistic.component';
+import { CreditRequestComponent } from './admin/credit-request/credit-request.component';
+import { AdminTransactionDetailComponent } from './admin/transaction/transaction-detail/transaction-detail.component';
+import { DashboardTransactionComponent } from './admin/admin-dashboard/dashboard-transaction/dashboard-transaction.component';
+import { TransactionDepositComponent } from './admin/transaction/transaction-deposit/transaction-deposit.component';
+import { TransactionListComponent } from './admin/transaction/transaction-list/transaction-list.component';
+  export const routes: Routes = [
   // Authentication routes (no sidebar)
   {
     path: '',
@@ -77,17 +82,24 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [AuthGuard, AdminGuard],
     children: [
+      { path: 'dashboard/transaction', component: DashboardTransactionComponent },
       { path: 'dashboard/customer', component: DashboardCustomerComponent },
       { path: 'admin/loan-dashboard', component: DashboardLoanAdminComponent },
+
+      { path: 'dashboard/account', component: AccountStatisticComponent },
       { path: 'customers', component: CustomerListComponent },
       { path: 'customers/detail/:cifCode', component: CustomerDetailAdminComponent },
       { path: 'accounts', component: CustomerListComponent }, // Placeholder, thay bằng component thực tế
       { path: 'kyc-management', component: KycManagerComponent }, // Placeholder, thay bằng component thực tế
+      { path: 'credit-requests', component: CreditRequestComponent },
       { path: 'settings', component: CustomerListComponent }, // Placeholder, thay bằng component thực tế
       { path: 'admin/transactions', component: TransactionListComponent },
       { path: 'employee/loans', component: PendingLoanListComponent },
       { path: 'employee/loans/pending', component: PendingLoanListComponent },
-      { path: 'employee/loans/:id', component: LoanDetailViewComponent }
+      { path: 'employee/loans/:id', component: LoanDetailViewComponent },
+      { path: 'admin/transactions', component: TransactionListComponent, canActivate: [KycGuard] },
+      { path: 'admin/transactions/detail/:referenceCode', component: AdminTransactionDetailComponent, canActivate: [KycGuard] },
+      { path: 'admin/transactions/deposit', component: TransactionDepositComponent, canActivate: [KycGuard] },
     ]
   },
   // Customer routes (with MainLayoutComponent)
@@ -103,8 +115,10 @@ export const routes: Routes = [
       { path: 'about', component: AboutComponent, canActivate: [KycGuard] },
       { path: 'savings', component: SavingsComponent, canActivate: [KycGuard] },
       { path: 'change-password', component: ChangePasswordComponent, canActivate: [KycGuard] },
-      { path: 'admin/transactions', component: TransactionListComponent, canActivate: [KycGuard] },
 
+
+      { path: 'admin/transactions', component: TransactionListComponent, canActivate: [KycGuard] },
+      { path: 'change-password', component: ChangePasswordComponent, canActivate: [KycGuard] },
       { 
         path: 'account', 
         component: AccountComponent,
@@ -123,7 +137,7 @@ export const routes: Routes = [
       { path: 'transactions', component: TransactionHomeComponent, canActivate: [KycGuard] },
       { path: 'transactions/transfer', component: TransferComponent, canActivate: [KycGuard] },
       { path: 'transactions/external-transfer', component: ExternalTransferComponent, canActivate: [KycGuard] },
-      { path: 'transactions/deposit', component: DepositComponent, canActivate: [KycGuard] },
+
       { path: 'transactions/withdraw', component: WithdrawComponent, canActivate: [KycGuard] },
       { path: 'transactions/transaction-result', component: TransactionResultComponent, canActivate: [KycGuard] },
       { path: 'transactions/history', component: TransactionHistoryComponent, canActivate: [KycGuard] },
@@ -146,5 +160,8 @@ export const routes: Routes = [
   { path: 'kyc', component: KycComponent, canActivate: [AuthGuard] },
   // Error pages
   { path: 'forbidden', component: ForbiddenComponent },
+  
+
+  // Not Found  
   { path: '**', component: NotFoundComponent }
 ];

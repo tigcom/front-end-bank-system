@@ -151,7 +151,12 @@ resendCountdown: number = 0;
 resendInterval: any;
   onResendOtp() {
     this.resendOtpRequest.referenceCode = this.transactionData.referenceCode;
-    this.resendOtpRequest.accountNumberRecipient = this.transactionData.toAccountNumber;
+    if(this.transactionData.type === 'DEPOSIT'){
+      this.resendOtpRequest.accountNumberRecipient = this.transactionData.toAccountNumber;
+    }
+    else{
+      this.resendOtpRequest.accountNumberRecipient = this.transactionData.fromAccountNumber;
+    }
     console.log('Gửi lại mã OTP',this.resendOtpRequest);
     this.transactionService.resendOtp(this.resendOtpRequest).subscribe({
       next: (res) => {

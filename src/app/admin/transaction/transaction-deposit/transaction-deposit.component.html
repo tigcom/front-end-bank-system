@@ -7,49 +7,39 @@
       <div class="p-fluid p-formgrid p-grid">
         
         <div class="p-field p-col-12 p-md-6">
-          <label for="toAccountNumber"> <i class="pi pi-user mr-2 ml-2"></i> Tài khoản của bạn:  
-            <small *ngIf="toCustomerName" style="font-size: 14px;">
-                <strong>{{ toCustomerName }}</strong>
-             </small>   
-          </label>
-          <div class="flex ">
+            <label for="toAccountNumber">Nhập số tài khoản cần nộp:</label>
+            <div class="flex ">
+    
+              <input
+                type="text"
+                pInputText
+                id="toAccountNumber"
+                formControlName="toAccountNumber"
+                placeholder="Số tài khoản"
+                [ngClass]="{
+                  'ng-invalid ng-dirty':
+                    submitted && depositForm.controls['toAccountNumber'].errors
+                }"
+                aria-describedby="toAccountNumber-help"
+              />
+              <small
+                id="toAccountNumber-help"
+                *ngIf="
+                  submitted && depositForm.controls['toAccountNumber'].errors?.['required']
+                "
+                class="p-error"
+                >Số tài khoản đích không được để trống.</small
+              >
+              
+              <!-- Hiện danh sách tài khoản đã chuyển gần nhất -->
+        
+            </div>
+            <small *ngIf="toCustomerName" class="customer-name">
+               <strong><i class="pi pi-user mr-2 ml-2"></i>{{ toCustomerName }}</strong>
+            </small>
+      
             
-            <p-dropdown
-              formControlName="toAccountNumber"
-              [options]="toAccountOptions"
-              optionLabel="accountDescription"
-              optionValue="accountNumber"
-              [showClear]="false"
-              class="w-full md:w-56"
-              (onChange)="onAccountChange($event)"
-              [ngClass]="{
-                'ng-invalid ng-dirty':
-                  submitted && depositForm.controls['toAccountNumber'].errors
-              }"
-              aria-describedby="toAccountNumber-help"
-            />
-            <button pButton type="button" class="p-button-rounded p-button-text" style="pointer-events: none;">
-              <img src="https://kienlongbank.com/Data/Sites/1/media/logo-klb/logo-kienlongbank-favicon.png" width="24" height="24" alt="icon" />
-            </button>
           </div>
-          
-          <div *ngIf="selectedBalance !== null" class="p-mt-2">
-            <p>
-              <i class="pi pi-money-bill mr-2"></i> Số dư:
-              {{ selectedBalance | number : "1.0-0" }} VNĐ
-            </p>
-          </div>
-          <small
-            id="toAccountNumber-help"
-            *ngIf="
-            submitted &&
-            depositForm.controls['toAccountNumber'].errors?.['required']
-            "
-            class="p-error"
-          >
-            Số tài khoản nguồn không được để trống.
-          </small>
-        </div>
   
   
         <div class="formgrid grid">

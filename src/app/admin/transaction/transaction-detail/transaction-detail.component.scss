@@ -1,0 +1,198 @@
+:host {
+  display: block;
+  max-width: 80%;
+  margin: 2rem auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  
+}
+
+.header-title {
+  background: linear-gradient(135deg, #006341, #006341);
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 2.2rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+
+  
+}
+
+.transaction-header {
+  margin-bottom: 2rem;
+
+  .transaction-amount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 1rem 0;
+      color: #000;
+  }
+
+  .transaction-type {
+    margin: 0.5rem 0;
+  }
+
+  .transaction-date {
+    color: #000;
+    font-size: 1rem;
+  }
+}
+
+// Transaction type badges
+.transaction-type-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+
+  &.transfer {
+    background-color: #2196f3;
+    color: #000;
+  }
+
+  &.deposit {
+    background-color: #4caf50;
+    color: #000;
+  }
+
+  &.withdraw {
+    background-color: #afdc3b;
+    color: #000;
+  }
+  &.pay_bill {
+    background-color: #afdc3b;
+    color: #000;
+  }
+}
+
+// Status badges
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+
+  &.completed {
+    background-color: #4caf50;
+    color: #000;
+  }
+
+  &.pending {
+    background-color: #ff9800;
+    color: #000;
+  }
+
+  &.failed {
+    background-color: #f44336;
+    color: #000;
+  }
+}
+
+.account-info {
+  padding: 1rem;
+
+  .account-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .account-name {
+    color: #666;
+    margin: 0.5rem 0 0 0;
+  }
+}
+
+.transaction-info {
+    margin-left: 2rem;
+    margin-bottom: 2rem;
+  label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    margin-top: 1rem;
+  }
+
+  .value {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0;
+  }
+}
+
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: #ffffff;
+}
+
+.error-state {
+  padding: 3rem;
+
+  .text-error {
+    color: #f44336;
+    font-size: 1.1rem;
+  }
+}
+
+// PrimeNG component customization
+::ng-deep {
+  .p-card {
+    .p-card-header {
+      padding: 0;
+    }
+
+    .p-card-body {
+      padding: 0;
+    }
+  }
+
+  .bg-primary {
+    background-color: #2c3e50;
+  }
+
+  .p-progressspinner {
+    width: 50px;
+    height: 50px;
+  }
+
+  .p-button {
+    &.p-button-secondary {
+      background: #34495e;
+      border-color: #34495e;
+
+      &:hover {
+        background: #2c3e50;
+        border-color: #2c3e50;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media screen and (max-width: 768px) {
+  .container {
+    margin: 1rem auto;
+  }
+
+  .transaction-details {
+    .transaction-amount {
+      font-size: 1.75rem;
+    }
+  }
+}
+

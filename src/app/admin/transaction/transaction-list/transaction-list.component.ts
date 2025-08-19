@@ -85,7 +85,12 @@ export class TransactionListComponent implements OnInit {
      private router: Router,
     private route: ActivatedRoute
   ) {}
-
+  private formatLocalISOString(date?: Date): string | undefined {
+    if (!date) return undefined;
+  
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${date.getMilliseconds().toString().padStart(3, '0')}`;
+  }
   ngOnInit() {
     this.loadFilterMetadata();
     this.filterTransactions(null);
@@ -113,8 +118,8 @@ export class TransactionListComponent implements OnInit {
     // Construct filter parameters
     const filterData  = {
       accountNumber: this.accountNumber,
-      fromDate: this.dateRange?.[0]?.toISOString(),
-      toDate: this.dateRange?.[1]?.toISOString(),
+      startDate: this.formatLocalISOString(this.dateRange?.[0]),
+      endDate: this.formatLocalISOString(this.dateRange?.[1]),
       type: this.selectedTransactionType,
       currency: this.selectedCurrency,
       status: this.selectedStatus,  
@@ -154,7 +159,7 @@ export class TransactionListComponent implements OnInit {
   }
 
   viewTransaction(referenceCode: string) {  
-    this.router.navigate(['/transactions/detail', referenceCode], {
+    this.router.navigate(['admin/transactions/detail', referenceCode], {
         queryParams: { accountNumber: this.accountNumber }
     });
   } 

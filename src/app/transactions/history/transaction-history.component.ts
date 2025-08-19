@@ -34,11 +34,11 @@ import { ActivatedRoute, Router } from '@angular/router';
     ToastModule,
     InputTextModule,
     InputNumberModule,
-    SliderModule
+    SliderModule,
   ],
   templateUrl: './transaction-history.component.html',
   styleUrls: ['./transaction-history.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class TransactionHistoryComponent implements OnInit {
   // Account related
@@ -52,8 +52,7 @@ export class TransactionHistoryComponent implements OnInit {
   today: Date = new Date();
   // Transaction types
   transactionTypes = [];
-  currencyOptions = [ 
-  ];
+  currencyOptions = [];
   statusOptions = [];
   sortOptions = [
     { sortName: 'Tất cả', sortValue: '' },
@@ -68,10 +67,10 @@ export class TransactionHistoryComponent implements OnInit {
   ];
   selectedTransactionType: string[] = [];
   selectedCurrency: string | null = null;
-  selectedStatus: string | null = null; 
+  selectedStatus: string | null = null;
   selectedSort: string | null = null;
   selectedSortDirection: string | null = null;
-  keyword: string | null = null;  
+  keyword: string | null = null;
   fromAmount: number | null = null;
   toAmount: number | null = null;
   // Transactions data
@@ -79,20 +78,30 @@ export class TransactionHistoryComponent implements OnInit {
   transactions: any[] = [];
   loading: boolean = false;
   accountNumber: string = '';
+
   constructor(
     private transactionService: TransactionService,
     private messageService: MessageService,
     private location: Location,
-     private router: Router,
+    private router: Router,
     private route: ActivatedRoute
   ) {}
+  private formatLocalISOString(date?: Date): string | undefined {
+    if (!date) return undefined;
 
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      date.getSeconds()
+    )}.${date.getMilliseconds().toString().padStart(3, '0')}`;
+  }
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.accountNumber = params['accountNumber'];
-      if(this.accountNumber) {        
+      if (this.accountNumber) {
         this.selectedAccount = this.accountNumber;
-        this.onAccountChange(this.selectedAccount); 
+        this.onAccountChange(this.selectedAccount);
         this.filterTransactions(null);
       }
     });
@@ -104,41 +113,52 @@ export class TransactionHistoryComponent implements OnInit {
     this.transactionService.getFilterMetadata().subscribe({
       next: (res) => {
         console.log(res.result.currencies);
-        this.transactionTypes = [{ label: 'Tất cả', value: '' }, ...res.result.transactionTypes] as any;
-        this.currencyOptions = [{ label: 'Tất cả', value: '' }, ...res.result.currencies] as any;
-        this.statusOptions = [{ label: 'Tất cả', value: '' }, ...res.result.statuses] as any; 
-      }
+        this.transactionTypes = [
+          { label: 'Tất cả', value: '' },
+          ...res.result.transactionTypes,
+        ] as any;
+        this.currencyOptions = [
+          { label: 'Tất cả', value: '' },
+          ...res.result.currencies,
+        ] as any;
+        this.statusOptions = [
+          { label: 'Tất cả', value: '' },
+          ...res.result.statuses,
+        ] as any;
+      },
     });
   }
 
   loadAccountOptions() {
     this.transactionService.getAccountForCustomer().subscribe({
       next: (res) => {
-        this.accountOptions = res.data.map((acc: any) => ({
+        this.accountOptions = res.result.map((acc: any) => ({
           accountNumber: acc.accountNumber,
           accountDescription: `Tài khoản thanh toán - ${acc.accountNumber}`,
-          balance: acc.balance
+          balance: acc.balance,
         }));
-        if(!this.selectedAccount && this.accountOptions.length > 0) {
+        if (!this.selectedAccount && this.accountOptions.length > 0) {
           this.selectedAccount = this.accountOptions[0].accountNumber;
-          this.onAccountChange({value: this.selectedAccount});
+          this.onAccountChange({ value: this.selectedAccount });
           this.filterTransactions(null);
         }
         // Get customer name
         this.transactionService.getCurrentCustomer().subscribe({
           next: (res) => {
-            this.customerName = this.removeVietnameseTones(res.data.fullName.toUpperCase());
+            this.customerName = this.removeVietnameseTones(
+              res.result.fullName.toUpperCase()
+            );
           },
           error: (err) => {
             console.error('Lỗi khi lấy thông tin khách hàng:', err);
             this.showError('Không thể lấy thông tin khách hàng');
-          }
+          },
         });
       },
       error: (err) => {
         console.error('Lỗi khi lấy danh sách tài khoản:', err);
         this.showError('Không thể lấy danh sách tài khoản');
-      }
+      },
     });
   }
 
@@ -148,7 +168,6 @@ export class TransactionHistoryComponent implements OnInit {
       (acc) => acc.accountNumber === selectedAccountNumber
     );
     this.selectedBalance = account ? account.balance : null;
-    
   }
 
   filterTransactions(event: any) {
@@ -158,24 +177,24 @@ export class TransactionHistoryComponent implements OnInit {
     }
 
     this.loading = true;
-    const page = event ? (event.first / event.rows) + 1 : 1; 
-    const size = event ? event.rows : 5; 
+    const page = event ? event.first / event.rows + 1 : 1;
+    const size = event ? event.rows : 5;
 
     // Construct filter parameters
-    const filterData  = {
+    const filterData = {
       accountNumber: this.selectedAccount,
-      fromDate: this.dateRange?.[0]?.toISOString(),
-      toDate: this.dateRange?.[1]?.toISOString(),
+      startDate: this.formatLocalISOString(this.dateRange?.[0]),
+      endDate: this.formatLocalISOString(this.dateRange?.[1]),
       type: this.selectedTransactionType,
       currency: this.selectedCurrency,
-      status: this.selectedStatus,  
+      status: this.selectedStatus,
       keyword: this.keyword,
       fromAmount: this.fromAmount,
       toAmount: this.toAmount,
       sortBy: this.selectedSort,
       sortDirection: this.selectedSortDirection,
       page: event ? page : 1,
-      size: event ? size : 5
+      size: event ? size : 5,
     };
 
     const params: any = {};
@@ -196,25 +215,25 @@ export class TransactionHistoryComponent implements OnInit {
         console.error('Lỗi khi lấy lịch sử giao dịch:', err);
         this.showError('Không thể lấy lịch sử giao dịch');
         this.loading = false;
-      }
+      },
     });
   }
 
-  viewTransaction(referenceCode: string) {  
+  viewTransaction(referenceCode: string) {
     this.router.navigate(['/transactions/detail', referenceCode], {
-      queryParams: { accountNumber: this.selectedAccount }
+      queryParams: { accountNumber: this.selectedAccount },
     });
-  } 
+  }
 
-  goBack(): void {  
-    this.router.navigate(['/transactions']); 
-  } 
+  goBack(): void {
+    this.router.navigate(['/transactions']);
+  }
 
   showSuccess(message: string) {
     this.messageService.add({
       severity: 'success',
       summary: 'Thành công',
-      detail: message
+      detail: message,
     });
   }
 
@@ -222,7 +241,7 @@ export class TransactionHistoryComponent implements OnInit {
     this.messageService.add({
       severity: 'error',
       summary: 'Lỗi',
-      detail: message
+      detail: message,
     });
   }
 

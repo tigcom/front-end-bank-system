@@ -128,7 +128,7 @@ export class AuthService {
 
         // Kiểm tra vai trò admin
         const isAdmin = this.checkAdminAccess();
-        const redirectUrl = isAdmin ? '/dashboard/customer' : '/customer-dashboard';
+        const redirectUrl = isAdmin ? '/dashboard/transaction' : '/customer-dashboard';
 
         this.kycService.checkKycStatus().subscribe({
           next: ({ verified }) => {

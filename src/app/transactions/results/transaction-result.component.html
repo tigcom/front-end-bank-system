@@ -19,13 +19,13 @@
         </div>
         <div class="field" *ngIf="transactionData.type !== 'WITHDRAW'&& transactionData.type !== 'PAY_BILL'"><strong>  
             <i class="pi pi-building-columns mr-2"></i> Đến tài khoản:</strong> 
-            <br>
             <span *ngIf="transactionData.type === 'EXTERNAL_TRANSFER'">
               <br>
               <small *ngIf="transactionData.destinationBankName" style="font-size: 14px;">
                 <strong><i class="pi pi-building-columns mr-2"></i>{{ transactionData.destinationBankName }}</strong>
               </small>
             </span>
+            <br>
             <small *ngIf="toCustomerName" style="font-size: 14px;">
               <strong><i class="pi pi-user mr-2 ml-2"></i>{{ toCustomerName }} -</strong>
             </small>

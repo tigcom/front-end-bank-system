@@ -102,4 +102,18 @@ export class AdminService {
   approveKyc(cifCode: string, status: string, reason: string | null): Observable<any> {
     return this.http.post(`http://localhost:8888/api/customers/kyc/approve`, { cifCode, status, reason });
   }
+
+  // Credit Request methods
+  getAllCreditRequests(page: number, size: number, keyword: string, forceRefresh?: boolean): Observable<any> {
+    const timestamp = forceRefresh ? `&_t=${Date.now()}` : '';
+    return this.http.get(`http://localhost:8888/account/admin/get-all-credit-crequest?page=${page}&size=${size}&keyword=${keyword}${timestamp}`);
+  }
+
+  approveCreditRequest(creditRequestId: string): Observable<any> {
+    return this.http.post(`http://localhost:8888/account/admin/approve-credit-request/${creditRequestId}`, {});
+  }
+
+  rejectCreditRequest(creditRequestId: string): Observable<any> {
+    return this.http.post(`http://localhost:8888/account/admin/reject-credit-request/${creditRequestId}`, {});
+  }
 }

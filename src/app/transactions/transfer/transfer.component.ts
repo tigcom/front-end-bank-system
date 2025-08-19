@@ -18,7 +18,13 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DropdownModule } from 'primeng/dropdown';
 import { Textarea } from 'primeng/textarea';
 import { ConfirmTransactionComponent } from '../confirm/confirm-transaction.component.ts';
-import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  switchMap,
+} from 'rxjs/operators';
 import { of } from 'rxjs';
 import { DialogModule } from 'primeng/dialog';
 
@@ -43,9 +49,9 @@ import { DialogModule } from 'primeng/dialog';
   ],
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
-export class TransferComponent implements OnInit{
+export class TransferComponent implements OnInit {
   transferForm!: FormGroup;
   submitted = false;
 
@@ -59,9 +65,8 @@ export class TransferComponent implements OnInit{
     toCustomerName: string | null;
     fromCustomerName: string | null;
     type: string;
-    } | null = null;
+  } | null = null;
 
-  
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
@@ -76,106 +81,119 @@ export class TransferComponent implements OnInit{
       description: [''],
     });
     this.selectedBalance = this.fromAccountOptions[0]?.balance || null;
-    
   }
-  
+
   fromAccountOptions: any[] = [];
-  toCustomerName: string | null = null; 
+  toCustomerName: string | null = null;
   fromCustomerName: string | null = null;
   listToAccountNumberTransactionLatest = [];
-  listInforToAccountNumberTransactionLatest: { accountNumber: string; customerName: string }[] = [];
+  listInforToAccountNumberTransactionLatest: {
+    accountNumber: string;
+    customerName: string;
+  }[] = [];
 
   ngOnInit(): void {
     this.transactionService.getAccountForCustomer().subscribe({
       next: (res) => {
         console.log(res);
-        this.fromAccountOptions = res.data.map((acc: any) => ({
+        this.fromAccountOptions = res.result.map((acc: any) => ({
           accountNumber: acc.accountNumber,
           accountDescription: `Tài khoản thanh toán - ${acc.accountNumber}`,
-          balance: acc.balance
+          balance: acc.balance,
         }));
         if (this.fromAccountOptions.length > 0) {
           this.transferForm.patchValue({
             fromAccountNumber: this.fromAccountOptions[0].accountNumber,
           });
           this.selectedBalance = this.fromAccountOptions[0].balance;
-          this.transactionService.getListToAccountNumberTransactioLatest(this.fromAccountOptions[0].accountNumber).subscribe({
-            next: (res) => {
-              this.listToAccountNumberTransactionLatest = res.result || [];
-              this.listInforToAccountNumberTransactionLatest = this.listToAccountNumberTransactionLatest.map((item: any) => ({
-                accountNumber: item.accountNumber,
-                customerName: this.removeVietnameseTones(item.customerName.toUpperCase())
-              }));
-              console.log("Danh sách tài khoản gần đây:", this.listToAccountNumberTransactionLatest);
-            },
-            error: (err) => {
-              console.error('Lỗi khi lấy danh sách tài khoản gần đây:', err);
-              this.listToAccountNumberTransactionLatest = [];
-            }
-          });
+          this.transactionService
+            .getListToAccountNumberTransactioLatest(
+              this.fromAccountOptions[0].accountNumber
+            )
+            .subscribe({
+              next: (res) => {
+                this.listToAccountNumberTransactionLatest = res.result || [];
+                this.listInforToAccountNumberTransactionLatest =
+                  this.listToAccountNumberTransactionLatest.map(
+                    (item: any) => ({
+                      accountNumber: item.accountNumber,
+                      customerName: this.removeVietnameseTones(
+                        item.customerName.toUpperCase()
+                      ),
+                    })
+                  );
+                console.log(
+                  'Danh sách tài khoản gần đây:',
+                  this.listToAccountNumberTransactionLatest
+                );
+              },
+              error: (err) => {
+                console.error('Lỗi khi lấy danh sách tài khoản gần đây:', err);
+                this.listToAccountNumberTransactionLatest = [];
+              },
+            });
         }
       },
       error: (err) => {
         console.error('Lỗi khi lấy danh sách tài khoản:', err);
-      }
+      },
     });
     // Get Current Customer
     this.transactionService.getCurrentCustomer().subscribe({
       next: (res) => {
-        this.fromCustomerName = this.removeVietnameseTones(res.data.fullName.toUpperCase());
+        this.fromCustomerName = this.removeVietnameseTones(
+          res.result.fullName.toUpperCase()
+        );
         this.transferForm.patchValue({
-          description: this.fromCustomerName + ' CHUYEN KHOAN'
+          description: this.fromCustomerName + ' CHUYEN KHOAN',
         });
       },
       error: (err) => {
         console.error('Lỗi khi lấy khách hàng hiện tại:', err);
-      }
+      },
     });
     // Get Customer By Account Number
-    this.transferForm.get('toAccountNumber')?.valueChanges.pipe(
-      debounceTime(300), // 1. Đợi 300ms sau lần nhập cuối cùng, tránh gọi API quá nhiều khi người dùng gõ liên tục
-      distinctUntilChanged(), // 2. Chỉ tiếp tục nếu giá trị thay đổi so với lần trước, tránh gọi API lặp lại với giá trị cũ
-      switchMap(toAccountNumber => {
-        if(!toAccountNumber){     
-          this.toCustomerName = null;
-        return of(null);  
-        }
-        return this.transactionService.getCustomerByAccountNumber(toAccountNumber).pipe(
-          map(res => res.data.fullName) ,
-          catchError((err) => {
-            this.toCustomerName = null; 
-            return of(null); 
-          })
-        )
-      })
-    
-    )
-    .subscribe({
-      next: (res) => {
-        if(res){
-          this.toCustomerName = this.removeVietnameseTones(res.toUpperCase());
-        }
-      },
-      error: (err) => {
-        console.error('Lỗi khi lấy khách hàng:', err);
-      }
-    });
-   
-  
-
+    this.transferForm
+      .get('toAccountNumber')
+      ?.valueChanges.pipe(
+        debounceTime(300), // 1. Đợi 300ms sau lần nhập cuối cùng, tránh gọi API quá nhiều khi người dùng gõ liên tục
+        distinctUntilChanged(), // 2. Chỉ tiếp tục nếu giá trị thay đổi so với lần trước, tránh gọi API lặp lại với giá trị cũ
+        switchMap((toAccountNumber) => {
+          if (!toAccountNumber) {
+            this.toCustomerName = null;
+            return of(null);
+          }
+          return this.transactionService
+            .getCustomerByAccountNumber(toAccountNumber)
+            .pipe(
+              map((res) => res.result.fullName),
+              catchError((err) => {
+                this.toCustomerName = null;
+                return of(null);
+              })
+            );
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.toCustomerName = this.removeVietnameseTones(res.toUpperCase());
+          }
+        },
+        error: (err) => {
+          console.error('Lỗi khi lấy khách hàng:', err);
+        },
+      });
   }
-  
 
   currencyOptions = [
     { currencyName: 'Việt Nam Đồng (VND)', currencyCode: 'VND' },
     { currencyName: 'US Dollar (USD)', currencyCode: 'USD' },
     { currencyName: 'Euro (EUR)', currencyCode: 'EUR' },
-    
   ];
-  
-  
+
   selectedBalance: number | null = null;
-  
+
   showConfirmForm = false;
   onFromAccountChange(event: any) {
     const selectedAccountNumber = event.value;
@@ -183,38 +201,45 @@ export class TransferComponent implements OnInit{
       (acc) => acc.accountNumber === selectedAccountNumber
     );
     this.selectedBalance = account ? account.balance : null;
-  
+
     if (selectedAccountNumber) {
-      console.log("Selected Account Number", selectedAccountNumber);
+      // console.log("Selected Account Number", selectedAccountNumber);
       this.loadRecentToAccounts(selectedAccountNumber);
     } else {
       this.listToAccountNumberTransactionLatest = [];
     }
   }
-  
+
   loadRecentToAccounts(fromAccountNumber: string) {
-    this.transactionService.getListToAccountNumberTransactioLatest(fromAccountNumber).subscribe({
-      next: (res) => {
-        this.listToAccountNumberTransactionLatest = res.result || [];
-        this.listInforToAccountNumberTransactionLatest = this.listToAccountNumberTransactionLatest.map((item: any) => ({
-          accountNumber: item.accountNumber,
-          customerName: this.removeVietnameseTones(item.customerName.toUpperCase())
-        }));
-        console.log("Danh sách tài khoản gần đây:", this.listToAccountNumberTransactionLatest);
-      },
-      error: (err) => {
-        console.error('Lỗi khi lấy danh sách tài khoản gần đây:', err);
-        this.listToAccountNumberTransactionLatest = [];
-      }
-    });
+    this.transactionService
+      .getListToAccountNumberTransactioLatest(fromAccountNumber)
+      .subscribe({
+        next: (res) => {
+          this.listToAccountNumberTransactionLatest = res.result || [];
+          this.listInforToAccountNumberTransactionLatest =
+            this.listToAccountNumberTransactionLatest.map((item: any) => ({
+              accountNumber: item.accountNumber,
+              customerName: this.removeVietnameseTones(
+                item.customerName.toUpperCase()
+              ),
+            }));
+          // console.log("Danh sách tài khoản gần đây:", this.listToAccountNumberTransactionLatest);
+        },
+        error: (err) => {
+          console.error('Lỗi khi lấy danh sách tài khoản gần đây:', err);
+          this.listToAccountNumberTransactionLatest = [];
+        },
+      });
   }
-  
+
   onSubmit(): void {
     this.submitted = true;
     if (this.transferForm.valid) {
       this.someTransferData = {
         fromAccountNumber: this.transferForm.get('fromAccountNumber')?.value,
-        toAccountNumber: String(this.transferForm.get('toAccountNumber')?.value),
+        toAccountNumber: String(
+          this.transferForm.get('toAccountNumber')?.value
+        ),
         amount: this.transferForm.get('amount')?.value,
         description: this.transferForm.get('description')?.value,
         currency: this.transferForm.get('currency')?.value,
@@ -226,7 +251,9 @@ export class TransferComponent implements OnInit{
       this.transactionService.transfer(this.someTransferData).subscribe({
         next: (res) => {
           console.log('Phản hồi từ server:', res);
-          this.showSuccess('Giao dịch chuyển khoản đã khởi tạo thành công. Vui lòng xác nhận OTP.');
+          this.showSuccess(
+            'Giao dịch chuyển khoản đã khởi tạo thành công. Vui lòng xác nhận OTP.'
+          );
           if (this.someTransferData) {
             this.someTransferData.referenceCode = res.result.referenceCode;
           }
@@ -234,31 +261,29 @@ export class TransferComponent implements OnInit{
         },
         error: (err) => {
           console.error('Lỗi khi gửi dữ liệu:', err.message);
-          this.showError('Chuyển khoản thất bại: ' + (err.error?.message || err.message));
-        }
+          this.showError(
+            'Chuyển khoản thất bại: ' + (err.error?.message || err.message)
+          );
+        },
       });
     }
-    
-    
-
   }
-  
 
-  
-    
   showRecentAccounts = false;
   openToAccountNumberLatest() {
-    console.log(this.listInforToAccountNumberTransactionLatest); 
+    console.log(this.listInforToAccountNumberTransactionLatest);
     this.showRecentAccounts = true;
   }
-// Hàm xử lý chọn tài khoản gần đây
-selectRecentAccount(account: { accountNumber: string; customerName: string }) {
-  
-  this.transferForm.patchValue({
-    toAccountNumber: account.accountNumber
-  });
-  this.showRecentAccounts = false;
-}
+  // Hàm xử lý chọn tài khoản gần đây
+  selectRecentAccount(account: {
+    accountNumber: string;
+    customerName: string;
+  }) {
+    this.transferForm.patchValue({
+      toAccountNumber: account.accountNumber,
+    });
+    this.showRecentAccounts = false;
+  }
 
   showSuccess(message: string) {
     this.messageService.add({
@@ -267,7 +292,7 @@ selectRecentAccount(account: { accountNumber: string; customerName: string }) {
       detail: message,
     });
   }
-  
+
   showError(message: string) {
     this.messageService.add({
       severity: 'error',
@@ -282,9 +307,10 @@ selectRecentAccount(account: { accountNumber: string; customerName: string }) {
   }
   removeVietnameseTones(str: string): string {
     return str
-      .normalize('NFD') 
-      .replace(/[\u0300-\u036f]/g, '') 
-      .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D');
   }
 
   onlyNumbers(event: KeyboardEvent): boolean {
@@ -310,4 +336,3 @@ selectRecentAccount(account: { accountNumber: string; customerName: string }) {
     this.location.back();
   }
 }
-
