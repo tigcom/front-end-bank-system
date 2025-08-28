@@ -1,0 +1,39 @@
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { AccountService } from '../../../services/account/account.service';
+
+@Component({
+  selector: 'app-loan',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './loan.component.html',
+  styleUrls: ['./loan.component.scss']
+})
+export class LoanComponent implements OnInit, OnDestroy {
+  private accountService = inject(AccountService);
+  loans: any[] = [];
+  loading = false;
+
+  ngOnInit(): void {
+    this.fetchLoans();
+  }
+
+  ngOnDestroy(): void {}
+
+  fetchLoans(): void {
+    this.loading = true;
+    this.accountService.getLoanAccounts().subscribe({
+      next: (res: any) => {
+        this.loans = Array.isArray(res?.data) ? res.data : res;
+      },
+      complete: () => (this.loading = false)
+    });
+  }
+
+  closeLoan(accountNumber: string): void {
+    this.accountService.closeLoanAccount(accountNumber).subscribe(() => this.fetchLoans());
+  }
+}
+
+

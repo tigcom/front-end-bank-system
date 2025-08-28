@@ -152,4 +152,21 @@ export class AccountService {
     return this.http.get<any>(`${this.apiUrl}/api/admin/statistic/dashboard`, {
     });
   }
+
+  // Loan accounts
+  getLoanAccounts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/getAllLoanAccounts`);
+  }
+
+  getLoanAccountDetail(accountNumber: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/loan/${accountNumber}`);
+  }
+
+  updateLoanOutstandingDebt(accountNumber: string, outstandingDebt: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/loan/${accountNumber}/debt?outstandingDebt=${outstandingDebt}`, {});
+  }
+
+  closeLoanAccount(accountNumber: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/loan/${accountNumber}/close`, {});
+  }
 }

@@ -1,0 +1,32 @@
+<div class="loan-accounts">
+  <h2>Tài khoản vay</h2>
+  <div *ngIf="loading">Đang tải...</div>
+  <table *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Số tài khoản</th>
+        <th>Trạng thái</th>
+        <th>Số tiền vay</th>
+        <th>Dư nợ</th>
+        <th>Lãi suất</th>
+        <th>Kỳ hạn (tháng)</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let l of loans">
+        <td>{{ l.accountNumber }}</td>
+        <td>{{ l.status }}</td>
+        <td>{{ l.loanAmount | number:'1.0-0' }}</td>
+        <td>{{ l.outstandingDebt | number:'1.0-0' }}</td>
+        <td>{{ l.interestRate }}%</td>
+        <td>{{ l.termMonths }}</td>
+        <td>
+          <button (click)="closeLoan(l.accountNumber)" [disabled]="l.status==='CLOSED'">Đóng</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
