@@ -6,10 +6,10 @@ import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DropdownModule } from 'primeng/dropdown';
 
 import { LoanService } from '../../services/loan.service';
 import { Loan } from '../../models/loan.model';
@@ -26,10 +26,10 @@ import { InfoIncome } from '../../models/infoIncome.model';
     ButtonModule,
     CardModule,
     InputNumberModule,
+    DropdownModule,
     ToastModule,
     TagModule,
-    ProgressSpinnerModule,
-    DropdownModule
+    ProgressSpinnerModule
   ],
   providers: [MessageService],
   templateUrl: './detail-loan-reject.component.html',
@@ -40,35 +40,37 @@ export class DetailLoanRejectComponent implements OnInit {
   loading = true;
   error: string | null = null;
   processingAction = false;
-
+  selectedFile: File | null = null;
+  selectedFileName: string | null = null;
+  incomeProofUrl: string | null = null;
+  loanTypeOptions = [
+    { label: 'Vay tiêu dùng', value: 'PERSONAL' },
+    { label: 'Vay thế chấp', value: 'MORTGAGE' },
+    { label: 'Vay mua xe', value: 'AUTO' },
+  ];
   // Form for editing loan details
   loanForm = new FormGroup({
     amount: new FormControl<number | null>(null, [
-      Validators.required, 
+      Validators.required,
       Validators.min(1000000)
     ]),
     interestRate: new FormControl<number | null>(null, [
-      Validators.required, 
+      Validators.required,
       Validators.min(0),
       Validators.max(100)
     ]),
     termMonths: new FormControl<number | null>(null, [
-      Validators.required, 
+      Validators.required,
       Validators.min(1)
     ]),
-    // InfoIncome fields
-    incomeAccountNumber: new FormControl<string | null>(null, [Validators.required]),
-    bankName: new FormControl<string | null>(null, [Validators.required]),
-    declaredIncome: new FormControl<number | null>(null, [Validators.required, Validators.min(0)])
+    declaredIncome: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(5000000)
+    ]),
+    loanType: new FormControl<string | null>(null, [
+      Validators.required
+    ])
   });
-
-  bankOptions = [
-    { bankName: 'Vietcombank', bankCode: '970436' },
-    { bankName: 'Techcombank', bankCode: '970437' },
-    { bankName: 'BIDV', bankCode: '970438' },
-    { bankName: 'VietinBank', bankCode: '970439' },
-    { bankName: 'ACB', bankCode: '970440' },
-  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -76,7 +78,7 @@ export class DetailLoanRejectComponent implements OnInit {
     private loanService: LoanService,
     private messageService: MessageService,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const loanId = this.route.snapshot.paramMap.get('id');
@@ -90,33 +92,34 @@ export class DetailLoanRejectComponent implements OnInit {
     this.loanService.getLoanById(loanId).subscribe({
       next: ({ data }) => {
         this.loanDetail = data;
-        const infoIncome = data.infoIncomes && data.infoIncomes.length > 0 ? data.infoIncomes[0] : null;
         this.loanForm.patchValue({
           amount: data.amount,
           interestRate: data.interestRate,
           termMonths: data.termMonths,
-          declaredIncome: infoIncome?.declaredIncome ?? null,
-          incomeAccountNumber: infoIncome?.accountNumber ?? null,
-          bankName: infoIncome?.bankName ?? null
+          declaredIncome: data.declaredIncome,
+          loanType: data.loanType,
+        });
+        this.loanService.getDisplayFileUrl((data as any).pathFile).subscribe(url => {
+          this.incomeProofUrl = url;
         });
         this.loading = false;
       },
       error: () => {
         this.error = 'Failed to load loan details';
         this.loading = false;
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Error', 
-          detail: this.error 
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: this.error
         });
       }
     });
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('vi-VN', { 
-      style: 'currency', 
-      currency: 'VND' 
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
     }).format(amount);
   }
 
@@ -128,58 +131,89 @@ export class DetailLoanRejectComponent implements OnInit {
     const s = (status ?? '').toString().toUpperCase();
     switch (s) {
       case 'APPROVED': return 'success';
-      case 'PENDING':  return 'warn';
+      case 'PENDING': return 'warn';
       case 'REJECTED': return 'danger';
-      default:         return 'info';
+      default: return 'info';
+    }
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.selectedFileName = this.selectedFile.name;
     }
   }
 
   updateAndResubmitLoan() {
     if (!this.loanDetail?.loanId || !this.loanForm.valid) return;
+
+    this.processingAction = true;
+
     const updatedLoan: Loan = {
       loanId: this.loanDetail.loanId,
       customerId: this.loanDetail.customerId,
-      accountNumber: this.loanDetail.accountNumber,
+      repaymentAccountNumber: this.loanDetail.repaymentAccountNumber,
+      disbursementAccountNumber: this.loanDetail.disbursementAccountNumber,
       createdAt: this.loanDetail.createdAt,
       approvedAt: this.loanDetail.approvedAt,
       rejectionReasons: this.loanDetail.rejectionReasons,
-      amount: this.loanForm.value.amount ?? 0,  
+      amount: this.loanForm.value.amount ?? 0,
       interestRate: this.loanForm.value.interestRate ?? 0,
       termMonths: this.loanForm.value.termMonths ?? 0,
       status: LoanStatus.PENDING,
       repayments: this.loanDetail.repayments ?? [],
-      infoIncomes: this.loanDetail.infoIncomes ?? []
+      declaredIncome: this.loanForm.value.declaredIncome ?? 0,
+      loanType: this.loanForm.value.loanType ?? 'PERSONAL',
+      pathFile: this.loanDetail.pathFile,
     };
-    this.processingAction = true;
+    if (this.selectedFile) {
+      const key = `loans/${updatedLoan.loanId}/${Date.now()}_${encodeURIComponent(this.selectedFileName ?? '')}`;
+      this.loanService.generatePresignedUrl(key, this.selectedFile.type).subscribe({
+        next: (url) => {
+          fetch(url, { method: 'PUT', body: this.selectedFile, headers: { 'Content-Type': this.selectedFile?.type ?? 'application/octet-stream' } })
+            .then(res => {
+              if (res.ok) {
+                this.loanService.updateFilePath(updatedLoan.loanId!, key, updatedLoan.declaredIncome ?? 0).subscribe({
+                next: (res) => {
+                  this.loanDetail!.pathFile = key;
+                  this.processingAction = false;
+                  this.toastr.success('Cập nhật và gửi lại khoản vay thành công!', 'Thành công');
+                  this.router.navigate(['/loans/overview']);
+                }
+              });
+              } else {
+                  this.toastr.error('Lỗi khi tải lên tệp', 'Lỗi');
+                  this.processingAction = false;
+              }
+            })
+
+        },
+        error: (err) => {
+          console.error('[Presigned URL error]', err);
+          this.toastr.error('Lỗi khi lấy URL tải lên', 'Lỗi');
+          this.processingAction = false;
+        }
+      });
+
+    }
     this.loanService.updateLoan(updatedLoan).subscribe({
-      next: () => {
-        const infoIncome = {
-          infoId: this.loanDetail?.infoIncomes && this.loanDetail?.infoIncomes.length > 0 ? this.loanDetail?.infoIncomes[0].infoId : null,
-          loanId: this.loanDetail?.loanId ?? 0,
-          accountNumber: this.loanForm.value.incomeAccountNumber ?? '',
-          bankName: this.loanForm.value.bankName ?? '',
-          declaredIncome: this.loanForm.value.declaredIncome ?? 0
-        };
-        console.log(infoIncome);
-        
-        this.loanService.updateInfoIncome(infoIncome?.infoId ?? 0, infoIncome).subscribe({
-          next: () => {
-            this.processingAction = false;
-            this.toastr.success('Cập nhật và gửi lại khoản vay thành công!', 'Thành công');
-            this.router.navigate(['/loans/overview']);
-          },
-          error: () => {
-            this.processingAction = false;
-            this.error = 'Failed to update InfoIncome';
-            this.toastr.error(this.error, 'Thất bại');
-          }
-        });
-      },
-      error: () => {
+      next: (res) => {
+        console.log('[Response success]', res);   // log response khi thành công
         this.processingAction = false;
-        this.error = 'Failed to update and resubmit loan';
-        this.toastr.error(this.error, 'Thất bại');
+        this.toastr.success('Cập nhật và gửi lại khoản vay thành công!', 'Thành công');
+        this.router.navigate(['/loans/overview']);
+      },
+      error: (err) => {
+        console.error('[Response error]', err);
+        console.log(err.error);
+        this.processingAction = false;
+        for (const key in err.error) {
+          if (err.error.hasOwnProperty(key)) {
+            this.toastr.error(err.error[key], 'Lỗi');
+          }
+        }
       }
     });
   }
-} 
+}

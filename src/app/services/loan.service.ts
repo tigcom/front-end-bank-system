@@ -68,6 +68,11 @@ export class LoanService {
     return this.http.get<ApiResponseWrapper<Loan[]>>(`${this.baseUrl}/getAllloans`,{ headers: this.getAuthHeaders() });
   }
 
+  // 9.1 GET: Lấy danh sách khoản vay đang chờ xử lý
+  getPendingLoans(): Observable<ApiResponseWrapper<Loan[]>> {
+    return this.http.get<ApiResponseWrapper<Loan[]>>(`${this.baseUrl}/pending`,{ headers: this.getAuthHeaders() });
+  }
+
   // 10. GET: Lấy tổng số tiền đã vay
   getTotalBorrowed(): Observable<ApiResponseWrapper<number>> {
     return this.http.get<ApiResponseWrapper<number>>(`${this.baseUrl}/total-borrowed`,{ headers: this.getAuthHeaders() });
@@ -96,9 +101,11 @@ export class LoanService {
     if (declaredIncome != null) body.declaredIncome = declaredIncome;
     return this.http.post<ApiResponseWrapper<Loan>>(`${this.fileUrl}/update-file-path`, body, { headers: this.getAuthHeaders() });
   }
-  getDisplayFileUrl(filePath: string): string {
-    const params = new URLSearchParams({ filePath });
-    return `${this.fileUrl}/display-file?${params.toString()}`;
+  getDisplayFileUrl(filePath: string): Observable<string> {
+    return this.http.get(`${this.fileUrl}/display-file`, {
+      params: { filePath },
+      responseType: 'text' 
+    });
   }
   // API thống kê cho dashboard admin
   getTotalDisbursedSystem(): Observable<ApiResponseWrapper<number>> {

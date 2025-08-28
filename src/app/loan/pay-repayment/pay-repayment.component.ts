@@ -143,11 +143,14 @@ export class PayRepaymentComponent implements OnInit {
           this.referenceCode = response.data;
           this.showOtpDialog = true;
         } else {
+   
           this.toastr.error(response.message || 'Failed to process payment', 'Thất bại');
         }
       },
       error: (err) => {
-        this.toastr.error('Error processing payment', 'Thất bại');
+        this.loading = false;
+        console.error(err.error.message);
+        this.toastr.error(err.error.message, 'Thất bại');
       },
       complete: () => {
         this.loading = false;

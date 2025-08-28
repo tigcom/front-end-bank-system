@@ -103,7 +103,6 @@ export class ApplyNewLoanComponent implements OnInit {
       {
         accountNumber: ['', Validators.required],
         incomeProofFile: [null, Validators.required],
-        purpose: [null, Validators.required],
         loanType: ['PERSONAL', Validators.required],
         declaredIncome: [
           null,
@@ -213,7 +212,6 @@ export class ApplyNewLoanComponent implements OnInit {
       return;
     }
     const loanPayload = {
-      disbursementAccountNumber: this.loanForm.value.accountNumber,
       repaymentAccountNumber: this.loanForm.value.accountNumber,
       amount: this.loanForm.value.amount,
       interestRate: this.loanForm.value.interestRate,
@@ -223,9 +221,11 @@ export class ApplyNewLoanComponent implements OnInit {
       declaredIncome: this.loanForm.value.declaredIncome,
       pathFile: null
     };
-    this.loanForm.get('interestRate')?.setValue(  this.rateControl.value);
-    loan.interestRate = this.rateControl.value;
-<<<<<<< HEAD
+    // this.loanForm.get('interestRate')?.setValue(  this.rateControl.value);
+    loanPayload.interestRate =this.rateControl.value;
+    console.log("loanPayload");
+    console.log(loanPayload.loanType);
+    console.log(this.rateControl.value);
     this.loanService.createLoan(loanPayload).subscribe({
       next: (response: ApiResponseWrapper<Loan>) => {
         const createdLoan = response.data;
@@ -243,6 +243,7 @@ export class ApplyNewLoanComponent implements OnInit {
             fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
               .then(res => {
                 if (!res.ok) throw new Error('Upload failed');
+                // this.loanService.updateFilePath(createdLoan.loanId!, key, declaredIncome).subscribe({
                 this.loanService.updateFilePath(createdLoan.loanId!, key, declaredIncome).subscribe({
                   next: () => {
                     this.loading = false;
@@ -271,8 +272,7 @@ export class ApplyNewLoanComponent implements OnInit {
         this.toastr.error( `Lỗi: ${httpError.error.message}`,'Lỗi');
       }
     });
-=======
-    console.log(loan);
+
     // this.loanService.createLoan(loan).subscribe({
     //   next: (response: ApiResponseWrapper<Loan>) => {
     //     const createdLoan = response.data;
@@ -301,7 +301,6 @@ export class ApplyNewLoanComponent implements OnInit {
     //     this.toastr.error( `Lỗi: ${httpError.error.message}`,'Lỗi');
     //   }
     // });
->>>>>>> d2ef44f0455495bc24e2589fdc8c049cac5f8426
   }
 
   onLoanCreated() {

@@ -31,10 +31,10 @@ export class PendingLoanListComponent implements OnInit {
 
   loadPendingLoans() {
     this.loading = true;
-    this.loanService.getAllLoans().subscribe({
+    this.loanService.getPendingLoans().subscribe({
       next: (response) => {
-        // Filter only pending loans
-        this.pendingLoans = response.data.filter(loan => loan.status === LoanStatus.PENDING);
+        // Backend already filtered pending loans
+        this.pendingLoans = response.data;
         console.log(this.pendingLoans);
         this.loading = false;
       },

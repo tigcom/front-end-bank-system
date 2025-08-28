@@ -219,7 +219,7 @@
     <ng-template pTemplate="body" let-loan>
       <tr>
         <td>{{ loan.loanId }}</td>
-        <td>{{ loan.accountNumber }}</td>
+        <td>{{ loan.repaymentAccountNumber }}</td>
         <td>{{ loan.amount | number:'1.0-0' }} VND</td>
         <td>{{ loan.interestRate }}%</td>
         <td>{{ loan.termMonths }}</td>
@@ -251,20 +251,18 @@
         <th> Thu nhập</th>
         <th>Trạng thái</th>
         <th>Ngày tạo</th>
-        <th>Ngày duyệt</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-loan>
       <tr>
         <td>{{ loan.loanId }}</td>
-        <td>{{ loan.accountNumber }}</td>
+        <td>{{ loan.repaymentAccountNumber }}</td>
         <td>{{ loan.amount | number:'1.0-0' }} VND</td>
         <td>{{ loan.interestRate }}%</td>
         <td>{{ loan.termMonths }}</td>
         <td>{{ loan.declaredIncome | number:'1.0-0' }} VND</td>
         <td><span class="status-badge pending">PENDING</span></td>
         <td>{{ loan.createdAt | date:'dd/MM/yyyy' }}</td>
-        <td>{{ loan.approvedAt || '—' }}</td>
       </tr>
     </ng-template>
   </p-table>
@@ -304,7 +302,7 @@
                   class="p-button-text p-button-rounded p-button-plain"
                 >{{ loan.loanId }}</button>
          </td>
-        <td>{{ loan.accountNumber }}</td>
+        <td>{{ loan.repaymentAccountNumber }}</td>
         <td>{{ loan.amount | number:'1.0-0' }} VND</td>
         <td>{{ loan.interestRate }}%</td>
         <td>{{ loan.termMonths }}</td>

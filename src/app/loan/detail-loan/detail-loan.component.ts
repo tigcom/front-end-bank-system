@@ -17,14 +17,15 @@ import { TableModule } from 'primeng/table';
 export class DetailLoanComponent implements OnInit {
   loanDetail: Loan = {
     loanId:null,
-    accountNumber: '',
+    repaymentAccountNumber: '',
+    disbursementAccountNumber: '',
     amount: 0,
     interestRate: 0,
     termMonths: 0,
     createdAt: '',
     approvedAt: '',
     customerId: null,
-    infoIncomes: [],
+    declaredIncome:0,
     status: null,
     repayments: [],
     rejectionReasons: []
@@ -50,15 +51,7 @@ export class DetailLoanComponent implements OnInit {
       next: (response) => {
         this.loanDetail = response.data;
         this.loading = false;
-        if (this.loanDetail.loanId) {
-          this.loanService.getInfoIncomesByLoanId(this.loanDetail.loanId).subscribe({
-            next: (response) => {
-              this.firstInfoIncome = response.data[0];
-            }
-          });
-        } else {
-          this.firstInfoIncome = null;
-        }
+        
       },
       error: (error) => {
         this.error = 'Failed to load loan details';

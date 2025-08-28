@@ -5,14 +5,17 @@ import { InfoIncome } from './infoIncome.model';
 export interface Loan {
   loanId: number| null;
   customerId: number| null;
-  accountNumber: string;
+  disbursementAccountNumber: string;
+  repaymentAccountNumber: string;
   amount: number;
   interestRate: number;
-  infoIncomes: InfoIncome[] | null;
+  declaredIncome: number | null;
   termMonths: number;
   status: LoanStatus | null;
   createdAt: string| null;
   approvedAt: string | null;
   repayments: Repayment[]|null;
   rejectionReasons: LoanRejectionReason[]|null;
+  loanType?: string;
+  pathFile?: string | null; 
 }

@@ -52,7 +52,8 @@ export class CurrentRepaymentScheduleComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching total borrowed:', error)
-        
+            this.loading = false;
+        this.error = error.message || 'An error occurred while fetching the current repayment.';
         // this.error = 'Error loading current repayment';
         // this.showNotification('error', 'Error', this.error);
       },

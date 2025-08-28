@@ -95,11 +95,8 @@ export class LoanDetailViewComponent implements OnInit {
     const loanId = this.route.snapshot.paramMap.get('id');
     if (loanId) {
       this.loadLoanDetail(+loanId);
-    }
-  }
 
-  get firstInfoIncome() {
-    return this.loanDetail && this.loanDetail.infoIncomes && this.loanDetail.infoIncomes.length > 0 ? this.loanDetail.infoIncomes[0] : null;
+    }
   }
 
   loadLoanDetail(loanId: number) {
@@ -107,28 +104,20 @@ export class LoanDetailViewComponent implements OnInit {
     this.loanService.getLoanById(loanId).subscribe({
       next: ({ data }) => {
         this.loanDetail = data;
-        if (data.loanId != null) {
-          this.loanService.getInfoIncomesByLoanId(data.loanId).subscribe({
-            next: (res) => {
-              this.loanDetail!.infoIncomes = res.data || [];
-              // If backend now stores pathFile on loan, prepare a view URL
-              if (this.loanDetail && (this.loanDetail as any).pathFile) {
-                this.incomeProofUrl = this.loanService.getDisplayFileUrl((this.loanDetail as any).pathFile);
-              }
-            },
-            error: () => {
-              this.loanDetail!.infoIncomes = [];
-            },
-            complete: () => {
-              this.loadCustomerDetail();
-              this.loading = false;
-            }
+        console.log('Loan detail loaded:', this.loanDetail);
+        
+        // Load income proof image if file path exists
+        if (data && (data as any).pathFile) {
+          this.loanService.getDisplayFileUrl((data as any).pathFile).subscribe(url => {
+            this.incomeProofUrl = url;   
           });
+          console.log('Income proof URL:', this.incomeProofUrl);
         } else {
-          this.loanDetail.infoIncomes = [];
-          this.loadCustomerDetail();
-          this.loading = false;
+          this.incomeProofUrl = null;
         }
+        
+        this.loadCustomerDetail();
+        this.loading = false;
       },
       error: () => {
         this.error = 'Failed to load loan details';
@@ -228,8 +217,7 @@ export class LoanDetailViewComponent implements OnInit {
     this.processingAction = true;
     this.loanService.rejectLoan(this.loanDetail.loanId, {
       loan_id: this.loanDetail.loanId,
-      reason,
-      createdAt: null
+      reason
     }).subscribe({
       next: () => {
         this.processingAction = false;

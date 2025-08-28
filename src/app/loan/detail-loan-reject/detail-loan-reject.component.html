@@ -1,6 +1,6 @@
 <div class="container">
   <p-toast></p-toast>
-  
+
   <div *ngIf="loading">
     <div class="socket">
       <div class="gel center-gel">
@@ -196,7 +196,6 @@
   </div>
 
   <div *ngIf="!loading && !error && loanDetail" class="loan-detail">
-    <!-- Loan Status Card -->
     <p-card header="Trạng thái khoản vay" [style]="{'margin-bottom': '1rem'}">
       <div class="status-info">
         <p-tag severity="danger" [value]="loanDetail.status ?? undefined"></p-tag>
@@ -204,33 +203,17 @@
       </div>
     </p-card>
 
-    <!-- Rejection Reasons Section -->
-    <p-card *ngIf="loanDetail.rejectionReasons?.length" 
-            header="Lý do từ chối" 
-            [style]="{'margin-bottom': '1rem'}">
-      <div class="rejection-reasons">
-        <div *ngFor="let reason of loanDetail.rejectionReasons" class="rejection-reason">
-          <p>{{ reason.reason }}</p>
-          <small>Từ chối vào: {{ formatDate(reason.createdAt) }}</small>
-        </div>
-      </div>
-    </p-card>
 
     <!-- Loan Details Card -->
     <p-card header="Chi tiết khoản vay" [style]="{'margin-bottom': '1rem'}">
       <form [formGroup]="loanForm" class="loan-form">
         <div class="form-field">
           <label for="amount">Số tiền vay (VND)</label>
-          <p-inputNumber 
-            id="amount" 
-            formControlName="amount" 
-            [min]="1000000"
-            [showButtons]="true"
-            mode="currency" 
-            currency="VND" 
-            locale="vi-VN">
+          <p-inputNumber id="amount" formControlName="amount" [min]="1000000" [showButtons]="true" mode="currency"
+            currency="VND" locale="vi-VN">
           </p-inputNumber>
-          <small *ngIf="loanForm.get('amount')?.errors?.['required'] && loanForm.get('amount')?.touched" class="error-text">
+          <small *ngIf="loanForm.get('amount')?.errors?.['required'] && loanForm.get('amount')?.touched"
+            class="error-text">
             Vui lòng nhập số tiền vay
           </small>
           <small *ngIf="loanForm.get('amount')?.errors?.['min'] && loanForm.get('amount')?.touched" class="error-text">
@@ -240,103 +223,105 @@
 
         <div class="form-field">
           <label for="interestRate">Lãi suất (%)</label>
-          <p-inputNumber 
-            id="interestRate" 
-            formControlName="interestRate" 
-            [min]="0"
-            [max]="100"
-            [showButtons]="true"
+          <p-inputNumber id="interestRate" formControlName="interestRate" [min]="0" [max]="100" [showButtons]="true"
             suffix="%">
           </p-inputNumber>
-          <small *ngIf="loanForm.get('interestRate')?.errors?.['required'] && loanForm.get('interestRate')?.touched" class="error-text">
+          <small *ngIf="loanForm.get('interestRate')?.errors?.['required'] && loanForm.get('interestRate')?.touched"
+            class="error-text">
             Vui lòng nhập lãi suất
           </small>
-          <small *ngIf="loanForm.get('interestRate')?.errors?.['min'] && loanForm.get('interestRate')?.touched" class="error-text">
+          <small *ngIf="loanForm.get('interestRate')?.errors?.['min'] && loanForm.get('interestRate')?.touched"
+            class="error-text">
             Lãi suất phải lớn hơn hoặc bằng 0%
           </small>
-          <small *ngIf="loanForm.get('interestRate')?.errors?.['max'] && loanForm.get('interestRate')?.touched" class="error-text">
+          <small *ngIf="loanForm.get('interestRate')?.errors?.['max'] && loanForm.get('interestRate')?.touched"
+            class="error-text">
             Lãi suất không được vượt quá 100%
           </small>
         </div>
 
         <div class="form-field">
           <label for="termMonths">Kỳ hạn (tháng)</label>
-          <p-inputNumber 
-            id="termMonths" 
-            formControlName="termMonths" 
-            [min]="1"
-            [showButtons]="true">
+          <p-inputNumber id="termMonths" formControlName="termMonths" [min]="1" [showButtons]="true">
           </p-inputNumber>
-          <small *ngIf="loanForm.get('termMonths')?.errors?.['required'] && loanForm.get('termMonths')?.touched" class="error-text">
+          <small *ngIf="loanForm.get('termMonths')?.errors?.['required'] && loanForm.get('termMonths')?.touched"
+            class="error-text">
             Vui lòng nhập kỳ hạn
           </small>
-          <small *ngIf="loanForm.get('termMonths')?.errors?.['min'] && loanForm.get('termMonths')?.touched" class="error-text">
+          <small *ngIf="loanForm.get('termMonths')?.errors?.['min'] && loanForm.get('termMonths')?.touched"
+            class="error-text">
             Kỳ hạn tối thiểu là 1 tháng
           </small>
         </div>
 
         <div class="form-field">
-          <label for="bankName">Ngân hàng chứng minh thu nhập</label>
+          <label for="declaredIncome">Tổng thu nhập cá nhân (VND/tháng)</label>
+          <p-inputNumber id="declaredIncome" formControlName="declaredIncome" [min]="5000000" [showButtons]="true"
+            mode="currency" currency="VND" locale="vi-VN">
+          </p-inputNumber>
+          <small *ngIf="loanForm.get('declaredIncome')?.errors?.['required'] && loanForm.get('declaredIncome')?.touched"
+            class="error-text">
+            Vui lòng nhập thu nhập cá nhân
+          </small>
+          <small *ngIf="loanForm.get('declaredIncome')?.errors?.['min'] && loanForm.get('declaredIncome')?.touched"
+            class="error-text">
+            Thu nhập tối thiểu là 5.000.000 VND
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label for="loanType">Mục đích vay</label>
           <p-dropdown
-            id="bankName"
-            formControlName="bankName"
-            [options]="bankOptions"
-            optionLabel="bankName"
-            optionValue="bankName"
-            placeholder="Chọn ngân hàng"
-            [class.invalid]="loanForm.get('bankName')?.touched && loanForm.get('bankName')?.invalid">
+            id="loanType"
+            formControlName="loanType"
+            [options]="loanTypeOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Chọn mục đích vay"
+            [class.invalid]="loanForm.get('loanType')?.touched && loanForm.get('loanType')?.invalid">
           </p-dropdown>
-          <small class="p-error" *ngIf="loanForm.get('bankName')?.touched && loanForm.get('bankName')?.hasError('required')">
-            Vui lòng chọn ngân hàng.
+          <small *ngIf="loanForm.get('loanType')?.errors?.['required'] && loanForm.get('loanType')?.touched"
+            class="error-text">
+            Vui lòng chọn mục đích vay
           </small>
         </div>
+
+        <!-- Rejection Reasons Section -->
+        <p-card *ngIf="loanDetail.rejectionReasons?.length" header="Lý do từ chối" [style]="{'margin-bottom': '1rem'}">
+          <div class="rejection-reasons">
+            <div *ngFor="let reason of loanDetail.rejectionReasons" class="rejection-reason">
+              <p>{{ reason.reason }}</p>
+            </div>
+          </div>
+        </p-card>
+        <ng-container *ngIf="incomeProofUrl; else noProof">
+           <label >Giấy tờ chứng minh thu nhập</label>
+          <img [src]="incomeProofUrl" alt="Income Proof"
+            style="max-width: 100%; max-height: 400px; object-fit: contain;" />
+        </ng-container>
+        <ng-template #noProof>
+          <span>Không có tệp chứng minh thu nhập.</span>
+        </ng-template>
         <div class="form-field">
-          <label for="incomeAccountNumber">Số tài khoản ngân hàng chứng minh thu nhập</label>
-          <p-inputNumber
-            id="incomeAccountNumber"
-            type="text"
-            formControlName="incomeAccountNumber"
-            placeholder="Nhập số tài khoản ngân hàng chứng minh thu nhập"
-            [class.invalid]="loanForm.get('incomeAccountNumber')?.touched && loanForm.get('incomeAccountNumber')?.invalid"
-            styleClass="w-full"
-            [style]="{ width: '100%' }"
-            [inputStyle]="{ width: '100%' }">
-          </p-inputNumber>
-          <small class="p-error" *ngIf="loanForm.get('incomeAccountNumber')?.touched && loanForm.get('incomeAccountNumber')?.hasError('required')">
-            Vui lòng nhập số tài khoản ngân hàng chứng minh thu nhập.
+          <label for="incomeProofFile">Ảnh/FILE chứng minh thu nhập mới</label>
+          <input id="incomeProofFile" type="file" accept="image/*,application/pdf" (change)="onFileSelected($event)"
+            [class.invalid]="loanForm.get('incomeProofFile')?.touched && loanForm.get('incomeProofFile')?.invalid">
+          <small class="error-text"
+            *ngIf="loanForm.get('incomeProofFile')?.touched && loanForm.get('incomeProofFile')?.hasError('required')">
+            Vui lòng chọn ảnh/file chứng minh thu nhập.
           </small>
-        </div>
-        <div class="form-field">
-          <label for="declaredIncome">Thu nhập chứng minh (VND)</label>
-          <p-inputNumber 
-            id="declaredIncome" 
-            formControlName="declaredIncome" 
-            [min]="0"
-            [showButtons]="true"
-            mode="currency" 
-            currency="VND" 
-            locale="vi-VN">
-          </p-inputNumber>
-          <small *ngIf="loanForm.get('declaredIncome')?.errors?.['required'] && loanForm.get('declaredIncome')?.touched" class="error-text">
-            Vui lòng nhập thu nhập chứng minh
-          </small>
-          <small *ngIf="loanForm.get('declaredIncome')?.errors?.['min'] && loanForm.get('declaredIncome')?.touched" class="error-text">
-            Thu nhập phải lớn hơn hoặc bằng 0 VND
-          </small>
+          <div *ngIf="selectedFileName" class="file-info">
+            <span>Đã chọn: {{ selectedFileName }}</span>
+          </div>
         </div>
       </form>
     </p-card>
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-      <p-button 
-        label="Cập nhật và gửi lại" 
-        icon="pi pi-check" 
-        severity="success" 
-        (onClick)="updateAndResubmitLoan()"
-        [loading]="processingAction"
-        [disabled]="!loanForm.valid">
+      <p-button label="Cập nhật và gửi lại" icon="pi pi-check" severity="success" (onClick)="updateAndResubmitLoan()"
+        [loading]="processingAction" [disabled]="!loanForm.valid">
       </p-button>
     </div>
   </div>
-</div> 
+</div>
