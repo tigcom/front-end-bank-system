@@ -134,25 +134,25 @@ export class ApplyNewLoanComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.loanService.getLoansByCustomerId().then(obs => {
-    //   obs.subscribe({
-    //     next: (res) => {
-    //       const loans = res.data || [];
-    //       console.log(loans);
-    //       const hasActiveLoan = loans.some((loan: Loan) => loan.status === 'APPROVED' || loan.status === 'PENDING');
-    //       console.log(hasActiveLoan);
-    //       if (hasActiveLoan) {
-    //         this.router.navigate(['/loan/warning-apply-loan']);
-    //       } else {
-    //         this.loadAccounts();
-    //       }
-    //     },
-    //     error: (err) => {
-    //       this.loadAccounts();
-    //     }
-    //   });
-    // });
-    this.loadAccounts();
+    this.loanService.getLoansByCustomerId().then(obs => {
+      obs.subscribe({
+        next: (res) => {
+          const loans = res.data || [];
+          console.log(loans);
+          const hasActiveLoan = loans.some((loan: Loan) => loan.status === 'APPROVED' || loan.status === 'PENDING');
+          console.log(hasActiveLoan);
+          if (hasActiveLoan) {
+            this.router.navigate(['/loan/warning-apply-loan']);
+          } else {
+            this.loadAccounts();
+          }
+        },
+        error: (err) => {
+          this.loadAccounts();
+        }
+      });
+    });
+    // this.loadAccounts();
     this.declaredIncomeControl.valueChanges.subscribe(() => {
       this.amountControl.setValidators([
         Validators.required,
@@ -267,9 +267,18 @@ export class ApplyNewLoanComponent implements OnInit {
           }
         });
       },
-      error: (httpError: HttpErrorResponse) => {
+        error: (err) => {
         this.loading = false;
-        this.toastr.error( `Lỗi: ${httpError.error.message}`,'Lỗi');
+        console.error(err);
+
+        if (err.error) {
+          // duyệt tất cả key trong err.error
+          Object.keys(err.error).forEach(key => {
+            this.toastr.error(`Lỗi: ${err.error[key]}`, 'Lỗi');
+          });
+        } else {
+          this.toastr.error('Đã xảy ra lỗi không xác định', 'Lỗi');
+        }
       }
     });
 

@@ -98,7 +98,9 @@ export class TransferComponent implements OnInit {
         console.log(res);
         this.fromAccountOptions = res.result.map((acc: any) => ({
           accountNumber: acc.accountNumber,
-          accountDescription: `Tài khoản thanh toán - ${acc.accountNumber}`,
+          accountDescription: acc.accountType === 'LOAN'
+            ? `Tài khoản vay - ${acc.accountNumber}`
+            : `Tài khoản thanh toán - ${acc.accountNumber}`,
           balance: acc.balance,
         }));
         if (this.fromAccountOptions.length > 0) {

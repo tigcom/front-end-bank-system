@@ -13,7 +13,7 @@
     <div *ngFor="let card of creditCards; let last = last" class="card-row">
       <!-- Card Image -->
       <div class="card-image-section">
-        <img [src]="'assets/img/' + card.imgURL" [alt]="card.typeName" class="credit-card-img" />
+        <img [src]=" card.imgURL" [alt]="card.typeName" class="credit-card-img" />
       </div>
       
       <!-- Card Info -->

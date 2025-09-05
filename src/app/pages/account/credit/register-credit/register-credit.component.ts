@@ -42,10 +42,7 @@ export class RegisterCreditComponent implements OnInit {
           this.creditCards = res.data;  
           console.log(this.creditAccounts);
           console.log(this.creditCards);
-          this.creditCards = this.creditCards.filter(card =>
-            !this.creditAccounts.some(account => account.cardID === card.cardID)
-          );
-          console.log(this.creditCards);
+
         });
       },
       error: (error) => {

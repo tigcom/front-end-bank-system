@@ -1,0 +1,188 @@
+.loan-accounts-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  .page-header {
+    margin-bottom: 10px;
+    text-align: center;
+    .page-title {
+      gap: 12px;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin: 0 0 8px 0;
+
+      i {
+        color: #667eea;
+      }
+    }
+
+    .page-description {
+      color: #6c757d;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+  }
+
+  .accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .account-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      :host ::ng-deep .p-card {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        overflow: hidden;
+
+        .p-card-header {
+          padding: 0;
+          border-bottom: 1px solid #e9ecef;
+        }
+
+        .p-card-body {
+          padding: 0;
+        }
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background: #133c65;
+        color: white;
+
+        .account-info {
+          .account-number {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            color: white;
+            padding-bottom: 10px;
+          }
+
+          .account-type {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+          }
+        }
+
+        .account-status {
+          :host ::ng-deep .p-tag {
+            font-weight: 600;
+            padding: 6px 12px;
+          }
+        }
+      }
+
+      .card-content {
+        padding: 24px;
+
+        .balance-section {
+          margin-bottom: 24px;
+          text-align: center;
+
+          .balance-label {
+            display: block;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+          }
+
+          .balance-amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #dc3545; // Red for debt
+          }
+        }
+
+        .account-actions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+
+          :host ::ng-deep .p-button {
+            flex: 1;
+            min-width: 100px;
+            justify-content: center;
+
+            @media (max-width: 480px) {
+              font-size: 0.875rem;
+              padding: 8px 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .loading-state,
+  .empty-state {
+    text-align: center;
+    padding: 64px 24px;
+    color: #6c757d;
+
+    i {
+      display: block;
+      font-size: 4rem;
+      margin-bottom: 16px;
+      color: #dee2e6;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin: 0 0 12px 0;
+      color: #495057;
+    }
+
+    p {
+      font-size: 1rem;
+      margin: 0 0 24px 0;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  .empty-state {
+    i {
+      color: #adb5bd;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .loan-accounts-container {
+    .page-header .page-title {
+      color: #f8f9fa;
+    }
+
+    .accounts-grid .account-card {
+      .card-header {
+        background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+
+        .account-info .account-number {
+          color: #f8f9fa;
+        }
+      }
+    }
+  }
+}

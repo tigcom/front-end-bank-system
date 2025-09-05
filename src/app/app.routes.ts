@@ -127,6 +127,7 @@ import { TransactionListComponent } from './admin/transaction/transaction-list/t
           { path: '', redirectTo: 'payment', pathMatch: 'full' },
           { path: 'payment', component: PaymentComponent },
           { path: 'saving', component: SavingsComponent },
+          { path: 'loan', loadComponent: () => import('./pages/account/loan/loan.component').then(m => m.LoanComponent) },
           { path: 'payment/detail/:accountNumber', component: DetailComponent },
           { path: 'credit', component: CreditComponent },
           { path: 'credit/detail/:cardAccountNumber', component: CreditDetailComponent },

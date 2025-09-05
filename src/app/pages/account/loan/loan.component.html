@@ -1,0 +1,64 @@
+<div class="loan-accounts-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="pi pi-wallet"></i>
+            Tài khoản vay
+        </h2>
+    </div>
+    <div class="accounts-grid" *ngIf="!loading">
+        <div class="account-card" *ngFor="let loan of loans; trackBy: trackByLoanAccountNumber">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <div class="card-header">
+                        <div class="account-info">
+                            <h3 class="account-type">Tài khoản vay</h3>
+                            <h3 class="account-number">{{ loan.accountNumber }}</h3>
+                        </div>
+                        <div class="account-status">
+                            <p-tag [value]="getLoanStatus(loan.status) === 'success' ? 'Hoạt động' : 
+                        getLoanStatus(loan.status) === 'warn' ? 'Đóng' : 'Khóa'"
+                                [severity]="getLoanStatus(loan.status)">
+                            </p-tag>
+                        </div>
+                    </div>
+                </ng-template>
+ 
+                <div class="card-content">
+
+                    <div class="flex justify-content-between gap-3">
+                        <div class="balance-section">
+                        <label class="balance-label">Số dư khả dụng:</label>
+                        <div class="balance-amount">
+                             {{ loan.loanAmount | currency:'VND':'symbol':'1.0-0':'vi' }}
+                        </div>
+                    </div>
+
+                    <div class="balance-section">
+                        <label class="balance-label">Số dư nợ hiện tại:</label>
+                        <div class="balance-amount">
+                            {{ loan.outstandingDebt | currency:'VND':'symbol':'1.0-0':'vi' }}
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <div class="account-actions">
+                        <p-button label="Chi tiết" icon="pi pi-eye" styleClass="p-button-info p-button-sm"
+                            (click)="goToDetail(loan.loanId)">
+                        </p-button>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <p>Đang tải danh sách tài khoản vay...</p>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && loans.length === 0">
+        <i class="pi pi-inbox"></i>
+        <h3>Không có tài khoản vay</h3>
+        <p>Bạn chưa có tài khoản vay nào.</p>
+    </div>
+</div>
