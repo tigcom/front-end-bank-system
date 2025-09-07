@@ -230,10 +230,14 @@
             formControlName="accountNumber"
             [options]="accounts"
             optionLabel="accountNumber"
+            [dataKey]="'accountNumber'"
             placeholder="Chọn tài khoản"
             [showClear]="true"
             class="w-full"
           ></p-dropdown>
+          <div *ngIf="selectedAccount" class="account-balance">
+            <small>Số dư: {{ selectedAccount.balance | currency:'VND':'symbol-narrow' :'1.0-20' }}</small>
+          </div>
           <small *ngIf="paymentForm.get('accountNumber')?.invalid && paymentForm.get('accountNumber')?.touched">
             Vui lòng chọn tài khoản thanh toán
           </small>
@@ -254,7 +258,13 @@
             class="w-full"
             placeholder="Nhập số tiền"
           ></p-inputNumber>
-          <small *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched">
+          <small *ngIf="paymentForm.get('amount')?.errors?.['exceedsRemaining'] && paymentForm.get('amount')?.touched">
+            Số tiền không được vượt quá số tiền còn lại: {{ calculateRemainingAmount() | currency:'VND':'symbol-narrow' :'1.0-20' }}
+          </small>
+          <small *ngIf="paymentForm.get('amount')?.errors?.['exceedsBalance'] && paymentForm.get('amount')?.touched">
+            Số tiền không được vượt quá số dư tài khoản: {{ selectedAccount?.balance | currency:'VND':'symbol-narrow' :'1.0-20' }}
+          </small>
+          <small *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched && !paymentForm.get('amount')?.errors?.['exceedsRemaining'] && !paymentForm.get('amount')?.errors?.['exceedsBalance']">
             Vui lòng nhập số tiền hợp lệ
           </small>
         </div>

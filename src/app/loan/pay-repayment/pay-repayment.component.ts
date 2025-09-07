@@ -58,6 +58,13 @@ export class PayRepaymentComponent implements OnInit {
   paymentForm: FormGroup;
   otpForm: FormGroup;
 
+  get selectedAccount(): Account | null {
+    const value = this.paymentForm?.get('accountNumber')?.value;
+    return value && typeof value === 'object' && 'balance' in value ? (value as Account) : null;
+  }
+
+
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -74,6 +81,10 @@ export class PayRepaymentComponent implements OnInit {
 
     this.otpForm = this.fb.group({
       otpCode: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
+    });
+
+    this.paymentForm.get('accountNumber')?.valueChanges.subscribe(() => {
+      this.updateAmountValidators();
     });
   }
 
@@ -93,13 +104,7 @@ export class PayRepaymentComponent implements OnInit {
         if (response.status === 200) {
           this.repayment = response.data;
           console.log(this.repayment);
-          const maxAmount = this.repayment.principal + this.repayment.interest - this.repayment.paidAmount;
-          this.paymentForm.get('amount')?.setValidators([
-            Validators.required,
-            Validators.min(0),
-            Validators.max(maxAmount)
-          ]);
-          this.paymentForm.get('amount')?.updateValueAndValidity();
+          this.updateAmountValidators();
         } else {
           this.error = response.message || 'Failed to load repayment details';
           this.toastr.error(this.error, 'Thất bại');
@@ -117,6 +122,7 @@ export class PayRepaymentComponent implements OnInit {
     this.loanService.getAccountsByCurrentUser().subscribe({
         next: (res: any) => {
             this.accounts = res.data;
+            console.log("22572");
             console.log(this.accounts);
             
           },
@@ -204,5 +210,32 @@ export class PayRepaymentComponent implements OnInit {
     setTimeout(() => {
       this.router.navigate(['/loans/current']);
     }, 2000);
+  }
+
+  private updateAmountValidators(): void {
+    this.paymentForm.get('amount')?.setValidators([
+      Validators.required,
+      Validators.min(0),
+      this.amountValidator.bind(this)
+    ]);
+    this.paymentForm.get('amount')?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private amountValidator(control: any) {
+    if (!control.value) return null;
+    
+    const amount = control.value;
+    const remainingAmount = this.calculateRemainingAmount();
+    const accountBalance = this.selectedAccount ? this.selectedAccount.balance : Number.POSITIVE_INFINITY;
+    
+    if (amount > remainingAmount) {
+      return { exceedsRemaining: true };
+    }
+    
+    if (amount > accountBalance) {
+      return { exceedsBalance: true };
+    }
+    
+    return null;
   }
 } 
