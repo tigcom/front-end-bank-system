@@ -44,42 +44,6 @@ export class DashboardLoanComponent implements OnInit {
       },
       error: (error) => console.error('Error fetching total outstanding:', error)
     });
-
-    // Sample data, replace with real API data later
-    this.barChartData = {
-      labels: ['Đã giải ngân', 'Đã thu hồi', 'Tiền lãi'],
-      datasets: [
-        {
-          label: 'Số tiền (VNĐ)',
-          backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
-          data: [100000000, 70000000, 5000000]
-        }
-      ]
-    };
-    this.barChartOptions = {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: 'Thống kê khoản vay' }
-      }
-    };
-    this.pieChartData = {
-      labels: ['Đã giải ngân', 'Đã thu hồi', 'Tiền lãi'],
-      datasets: [
-        {
-          data: [100000000, 70000000, 5000000],
-          backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726'],
-          hoverBackgroundColor: ['#64B5F6', '#81C784', '#FFB74D']
-        }
-      ]
-    };
-    this.pieChartOptions = {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom' },
-        title: { display: true, text: 'Tỷ lệ khoản vay' }
-      }
-    };
   }
 
   navigateToCreateLoan() {

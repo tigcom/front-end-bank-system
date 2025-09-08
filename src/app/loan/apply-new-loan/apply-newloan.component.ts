@@ -40,9 +40,7 @@ function termMaxByAmountValidator(amountControl: AbstractControl): ValidatorFn {
       } else {
         maxTerm = 240;
       }
-      return term > maxTerm
-        ? { termTooLong: { actual: term, maxTerm } }
-        : null;
+      return term > maxTerm ? { termTooLong: { actual: term, maxTerm } }: null;
     }
     return null;
   };
@@ -146,9 +144,6 @@ export class ApplyNewLoanComponent implements OnInit {
           } else {
             this.loadAccounts();
           }
-        },
-        error: (err) => {
-          this.loadAccounts();
         }
       });
     });
@@ -217,7 +212,6 @@ export class ApplyNewLoanComponent implements OnInit {
       interestRate: this.loanForm.value.interestRate,
       termMonths: this.loanForm.value.termMonths,
       loanType: this.loanForm.value.loanType,
-      // optional new fields
       declaredIncome: this.loanForm.value.declaredIncome,
       pathFile: null
     };
@@ -243,7 +237,6 @@ export class ApplyNewLoanComponent implements OnInit {
             fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
               .then(res => {
                 if (!res.ok) throw new Error('Upload failed');
-                // this.loanService.updateFilePath(createdLoan.loanId!, key, declaredIncome).subscribe({
                 this.loanService.updateFilePath(createdLoan.loanId!, key, declaredIncome).subscribe({
                   next: () => {
                     this.loading = false;
@@ -272,7 +265,6 @@ export class ApplyNewLoanComponent implements OnInit {
         console.error(err);
 
         if (err.error) {
-          // duyệt tất cả key trong err.error
           Object.keys(err.error).forEach(key => {
             this.toastr.error(`Lỗi: ${err.error[key]}`, 'Lỗi');
           });
@@ -281,35 +273,6 @@ export class ApplyNewLoanComponent implements OnInit {
         }
       }
     });
-
-    // this.loanService.createLoan(loan).subscribe({
-    //   next: (response: ApiResponseWrapper<Loan>) => {
-    //     const createdLoan = response.data;
-    //     // Sau khi tạo loan thành công, tạo InfoIncome
-    //     const infoIncome = {
-    //       infoId: null,
-    //       loanId:createdLoan.loanId ,
-    //       accountNumber: this.loanForm.value.incomeAccountNumber,
-    //       bankName: this.loanForm.value.bankName,
-    //       declaredIncome: this.loanForm.value.declaredIncome
-    //     };
-    //     this.loanService.createInfoIncome(infoIncome).subscribe({
-    //       next: () => {
-    //         this.loading = false;
-    //         this.toastr.success('Đăng ký khoản vay thành công!', 'Thành công');
-    //         this.onLoanCreated();
-    //       },
-    //       error: (err) => {
-    //         this.loading = false;
-    //         this.toastr.error('Tạo InfoIncome thất bại', 'Lỗi');
-    //       }
-    //     });
-    //   },
-    //   error: (httpError: HttpErrorResponse) => {
-    //     this.loading = false;
-    //     this.toastr.error( `Lỗi: ${httpError.error.message}`,'Lỗi');
-    //   }
-    // });
   }
 
   onLoanCreated() {
