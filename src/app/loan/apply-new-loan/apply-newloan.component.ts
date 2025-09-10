@@ -86,7 +86,7 @@ export class ApplyNewLoanComponent implements OnInit {
   computedRate: number | null = null;
   loanTypeOptions = [
     { label: 'Vay tiêu dùng', value: 'PERSONAL' },
-    { label: 'Vay thế chấp', value: 'MORTGAGE' },
+    { label: 'Vay mua nhà', value: 'HOME' },
     { label: 'Vay mua xe', value: 'AUTO' },
   ];
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Loan} from '../models/loan.model';
+import { Repayment } from '../models/repayment.model';``
 import { ApiResponseWrapper} from '../models/api-response-wrapper.model';
 import { LoanRejectionReason } from '../models/LoanRejectionReason.model';
 import { CustomerResponse } from '../interfaces/customerResponse';
@@ -12,6 +13,7 @@ import { Account } from '../interfaces/account.interface';
 export class LoanService {
   // URL gốc của backend Java
   private readonly baseUrl = 'http://localhost:8888/api/loans';
+    private readonly baseUrl2 = 'http://localhost:8888/api/repayments';
   private readonly fileUrl = 'http://localhost:8888/api/files';
 
   constructor(
@@ -68,6 +70,10 @@ export class LoanService {
     return this.http.get<ApiResponseWrapper<Loan[]>>(`${this.baseUrl}/getAllloans`,{ headers: this.getAuthHeaders() });
   }
 
+
+  getRepayments(loanId: number): Observable<ApiResponseWrapper<Repayment[]>> {
+    return this.http.get<ApiResponseWrapper<Repayment[]>>(`${this.baseUrl2}/loan/${loanId}`,{ headers: this.getAuthHeaders() });
+  }
   // 9.1 GET: Lấy danh sách khoản vay đang chờ xử lý
   getPendingLoans(): Observable<ApiResponseWrapper<Loan[]>> {
     return this.http.get<ApiResponseWrapper<Loan[]>>(`${this.baseUrl}/pending`,{ headers: this.getAuthHeaders() });

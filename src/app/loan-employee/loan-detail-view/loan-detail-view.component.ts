@@ -166,7 +166,12 @@ export class LoanDetailViewComponent implements OnInit {
   formatDate(dateString: string | null): string {
     return dateString ? new Date(dateString).toLocaleDateString('vi-VN') : 'N/A';
   }
-
+getLoanPurpose(loanType: string | null): string {
+    if (loanType === 'PERSONAL') return 'Vay tiêu dùng';
+    else if (loanType === 'HOME') return 'Vay mua nhà';
+    else if (loanType === 'AUTO') return 'Vay mua xe';
+    else return 'Khác';
+}
   getStatusSeverity(status: LoanStatus | string | null | undefined): Severity {
     const s = (status ?? '').toString().toUpperCase();
     switch (s) {

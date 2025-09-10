@@ -290,7 +290,7 @@
         </div>
       </div>
 
-      <div class="repayment-card" *ngIf="loanDetail.repayments?.length">
+      <div class="repayment-card">
         <div class="card-header">
           <i class="pi pi-list"></i>
           <h2>Lịch trả nợ</h2>
@@ -327,10 +327,12 @@
         </div>
       </div>
 
-      <div class="rejection-card" *ngIf="loanDetail.rejectionReasons?.length">
+      
+    </div>
+    <div class="rejection-card" *ngIf="loanDetail.rejectionReasons?.length">
         <div class="card-header">
           <i class="pi pi-times-circle"></i>
-          <h2>Lý do từ chối</h2>
+          <h2>Lịch sử từ chối</h2>
         </div>
         <div class="rejection-list">
           <div class="rejection-item" *ngFor="let reason of loanDetail.rejectionReasons">
@@ -339,6 +341,5 @@
           </div>
         </div>
       </div>
-    </div>
   </div>
 </div>

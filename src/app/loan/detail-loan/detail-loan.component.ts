@@ -7,6 +7,7 @@ import { InfoIncome } from '../../models/infoIncome.model';
 import { Repayment } from '../../models/repayment.model';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-detail-loan',
   standalone: true,
@@ -42,9 +43,24 @@ export class DetailLoanComponent implements OnInit {
     const loanId = this.route.snapshot.paramMap.get('id');
     if (loanId) {
       this.loadLoanDetail(Number(loanId));
+      this.loadRepayments(Number(loanId));
+      
+    }
+    
+  }
+  async loadRepayments(loanId: number) {
+    
+    try {
+      const response = await firstValueFrom(
+        this.loanService.getRepayments(loanId)
+      );
+      if (response?.data?.length > 0) {
+        this.loanDetail.repayments = response.data;
+      }
+    } catch (err) {
+      console.error('Error loading repayments:', err);
     }
   }
-
   loadLoanDetail(loanId: number) {
     this.loading = true;
     this.loanService.getLoanById(loanId).subscribe({

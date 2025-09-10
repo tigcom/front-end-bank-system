@@ -92,6 +92,7 @@ export class PayRepaymentComponent implements OnInit {
     const repaymentId = this.route.snapshot.paramMap.get('id');
     if (repaymentId) {
       this.loadRepayment(+repaymentId);
+
       this.loadAccounts();
     }
   }
@@ -103,7 +104,9 @@ export class PayRepaymentComponent implements OnInit {
       next: (response: ApiResponseWrapper<Repayment>) => {
         if (response.status === 200) {
           this.repayment = response.data;
-          console.log(this.repayment);
+          console.log("591");
+          
+          console.log(response.data);
           this.updateAmountValidators();
         } else {
           this.error = response.message || 'Failed to load repayment details';

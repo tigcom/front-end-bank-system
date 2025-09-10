@@ -246,6 +246,13 @@
                 <span>{{ formatDate(loanDetail?.createdAt || null) }}</span>
               </div>
             </div>
+             <div class="info-item">
+              <i class="pi pi-calendar"></i>
+              <div class="info-content">
+                <label>Mục đích</label>
+                <span>{{ getLoanPurpose(loanDetail?.loanType || null) }}</span>
+              </div>
+            </div>
             <div class="info-item" *ngIf="loanDetail?.approvedAt">
               <i class="pi pi-calendar-check"></i>
               <div class="info-content">

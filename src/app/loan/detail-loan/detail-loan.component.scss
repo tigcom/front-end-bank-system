@@ -122,13 +122,12 @@ $shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
 
 .content-grid {
   display: flex;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
 }
 
-.info-card,
-.repayment-card{
+.info-card{
+  width: 20%;
   @include glassmorphism;
   border-radius: 16px;
   overflow: hidden;
@@ -156,6 +155,63 @@ $shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
   }
 }
 
+.repayment-card{
+  width: 80%;
+  @include glassmorphism;
+  border-radius: 16px;
+  overflow: hidden;
+  @include smooth-transition;
+
+  i {
+    font-size: 1.5rem;
+    color: $text-primary;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: $primary-gradient;
+    border-bottom: 1px solid $glass-border;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+}
+.rejection-card{
+  margin-left: 2rem;
+  width: 50%;
+  @include glassmorphism;
+  border-radius: 16px;
+  overflow: hidden;
+  @include smooth-transition;
+
+  i {
+    font-size: 1.5rem;
+    color: $text-primary;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: $primary-gradient;
+    border-bottom: 1px solid $glass-border;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+}
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
