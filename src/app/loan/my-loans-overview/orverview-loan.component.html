@@ -273,7 +273,7 @@
     <i class="pi pi-times-circle" style="color: red;">
       <span style="margin-left: 10px;"></span>
     </i>
-    <span style="margin-left: 10px;"><Strong>Bị từ chối</Strong></span>
+    <span style="margin-left: 10px;"><Strong>Bị từ chối - thu hồi</Strong></span>
   </ng-template>
 
   <p-table [value]="rejectedLoans" [paginator]="false" [rows]="5" responsiveLayout="scroll" dataKey="loanId">
@@ -307,9 +307,9 @@
         <td>{{ loan.interestRate }}%</td>
         <td>{{ loan.termMonths }}</td>
         <td>{{ loan.declaredIncome | number:'1.0-0' }} VND</td>
-        <td><span class="status-badge rejected">REJECTED</span></td>
+        <td><span class="status-badge rejected">{{ loan.status }}</span></td>
         <td>{{ loan.createdAt | date:'dd/MM/yyyy' }}</td>
-        <td><p-button (click)="goToRejectedLoan(loan.loanId)"  icon="pi pi-file-edit"></p-button></td>
+        <td><p-button (click)="goToRejectedLoan(loan.loanId)"  *ngIf="loan.status != 'CANCELLED'"  icon="pi pi-file-edit"></p-button></td>
       </tr>
     </ng-template>
     

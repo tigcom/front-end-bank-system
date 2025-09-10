@@ -39,7 +39,7 @@
               
               this.approvedLoans = this.loans.filter(l => l.status === LoanStatus.APPROVED || l.status === LoanStatus.CLOSED);
               this.pendingLoans = this.loans.filter(l => l.status === LoanStatus.PENDING);
-              this.rejectedLoans = this.loans.filter(l => l.status === LoanStatus.REJECTED);
+              this.rejectedLoans = this.loans.filter(l => l.status === LoanStatus.REJECTED || l.status === LoanStatus.CANCELLED);
               this.loading = false;
             },
             error: (err) => {

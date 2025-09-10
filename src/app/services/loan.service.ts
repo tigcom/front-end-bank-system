@@ -120,6 +120,9 @@ export class LoanService {
   getTotalCollectedSystem(): Observable<ApiResponseWrapper<number>> {
     return this.http.get<ApiResponseWrapper<number>>(`${this.baseUrl}/admin/total-collected`, { headers: this.getAuthHeaders() });
   }
+  getTotalRecoveredSystem(): Observable<ApiResponseWrapper<number>> {
+    return this.http.get<ApiResponseWrapper<number>>(`${this.baseUrl}/admin/total-recovered`, { headers: this.getAuthHeaders() });
+  }
   getTotalProfitSystem(): Observable<ApiResponseWrapper<number>> {
     return this.http.get<ApiResponseWrapper<number>>(`${this.baseUrl}/admin/total-profit`, { headers: this.getAuthHeaders() });
   }

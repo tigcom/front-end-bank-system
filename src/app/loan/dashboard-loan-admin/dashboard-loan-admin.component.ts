@@ -21,6 +21,7 @@ export class DashboardLoanAdminComponent implements OnInit {
   totalBorrowed = 0;
   totalOutstanding = 0;
   totalInterest = 0;
+  totalRecovered = 0;
   totalLoans = 0;
   totalPaidRepayments = 0;
   totalUnpaidRepayments = 0;
@@ -38,13 +39,14 @@ export class DashboardLoanAdminComponent implements OnInit {
     this.loading = true;
     Promise.all([
       this.loanService.getTotalDisbursedSystem().toPromise(),
-      this.loanService.getTotalCollectedSystem().toPromise(),
+      this.loanService.getTotalRecoveredSystem().toPromise(),
       this.loanService.getTotalProfitSystem().toPromise(),
       this.loanService.getAllLoans().toPromise(),
       this.loanService.getRepaymentStats().toPromise()
-    ]).then(([disbursed, collected, profit, allLoans, repaymentStats]) => {
+    ]).then(([disbursed, recovered, profit, allLoans, repaymentStats]) => {
       this.totalBorrowed = disbursed?.data || 0;
-      this.totalOutstanding = (disbursed?.data || 0) - (collected?.data || 0);
+      this.totalRecovered = recovered?.data || 0;
+      this.totalOutstanding = (disbursed?.data || 0) - this.totalRecovered;
       this.totalInterest = profit?.data || 0;
       const loans = allLoans?.data || [];
       this.totalLoans = loans.length;
@@ -74,7 +76,7 @@ export class DashboardLoanAdminComponent implements OnInit {
         labels: ['Đã giải ngân', 'Đã thu hồi', 'Tiền lãi'],
         datasets: [
           {
-            data: [this.totalBorrowed, collected?.data || 0, this.totalInterest],
+            data: [this.totalBorrowed, this.totalRecovered, this.totalInterest],
             backgroundColor: ['#5E60CE', '#48BFE3', '#FF9F1C'],
             hoverBackgroundColor: ['#6930C3', '#56CFE1', '#FFBF69']
           }
