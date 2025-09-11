@@ -81,7 +81,8 @@ export class AdminTransactionDetailComponent implements OnInit {
 
     this.transactionService.getTransactionByReferenceCode(referenceCode).subscribe({
       next: (response: any) => {
-        this.transaction = response.result;     
+        this.transaction = response.result;    
+        console.log("2252"); 
         console.log(this.transaction);
         this.loadFromCustomerName(this.transaction.fromAccountNumber);
         if(this.transaction.type=='EXTERNAL_TRANSFER'){
@@ -140,7 +141,9 @@ export class AdminTransactionDetailComponent implements OnInit {
       case 'EXTERNAL_TRANSFER':
         return 'Chuyển khoản liên ngân hàng';
       case 'PAY_BILL':
-        return 'Thanh toán hóa đơn'
+        return 'Thanh toán hóa đơn';
+      case 'DISBURSEMENT':
+        return 'Giải ngân';
       default:
         return 'Không xác định';
     }
